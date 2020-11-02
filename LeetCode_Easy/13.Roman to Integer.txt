@@ -1,0 +1,59 @@
+class Solution {
+public:
+    int romanToInt(string s) {
+        char previousChar = 0;
+        int totalValue = 0;
+        for(char a : s) {
+            switch(a) {
+                case 'I':
+                    totalValue += 1;
+                    break;
+                case 'V':
+                    if(previousChar == 'I') {
+                        totalValue += 3;    
+                    } else {
+                        totalValue += 5;
+                    }
+                    break;
+                case 'X':
+                    if(previousChar == 'I') {
+                        totalValue += 8;    
+                    } else {
+                        totalValue += 10;
+                    }
+                    break;
+                case 'L':
+                    if(previousChar == 'X') {
+                        totalValue += 30;    
+                    } else {
+                        totalValue += 50;
+                    }
+                    break;
+                case 'C':
+                    if(previousChar == 'X') {
+                        totalValue += 80;    
+                    } else {
+                        totalValue += 100;
+                    }
+                    break;
+                case 'D':
+                    if(previousChar == 'C') {
+                        totalValue += 300;    
+                    } else {
+                        totalValue += 500;
+                    }
+                    break;
+                case 'M':
+                    if(previousChar == 'C') {
+                        totalValue += 800;    
+                    } else {
+                        totalValue += 1000;
+                    }
+                    
+                    break;
+            }
+            previousChar = a;           
+        }
+        return totalValue;   
+    }
+};

@@ -1,0 +1,11 @@
+class Solution {
+public:
+    int titleToNumber(string s) {
+        int result=0;
+        for(int i=0;i<s.size();i++)
+        {
+            result=result*26 + (s[i] - 'A' + 1);        // similar to conversion from binary to base 26
+        }
+        return result;
+    }
+};
