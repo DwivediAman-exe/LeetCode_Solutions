@@ -1,0 +1,26 @@
+class Solution {
+public:
+    int longestPalindrome(string s) {
+        int f1[26*2]={0};
+        for(int i=0;i<s.length();i++)
+        {
+            if(isupper(s[i]))
+                f1[s[i]-'A'+26]++;
+            if(islower(s[i]))
+                f1[s[i]-'a']++;
+        }
+        int sum=0;
+        bool flag=false;
+        for(int i=0;i<26*2;i++)
+        {
+            if(f1[i]%2==0)
+                sum+=f1[i];
+            else
+            {sum+=f1[i]-1;flag=true;}
+        }
+        if(flag)
+            return sum+1;
+        else
+            return sum;
+    }
+};
