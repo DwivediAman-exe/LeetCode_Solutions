@@ -1,1 +1,2 @@
-# This branch contains Optimised and easy solution of Medium level Difficulty Question of LeetCode in C++ language.
+# # This Folder contains optimised solution of Leetcode problems tagged as Medium in C++ .
+
