@@ -1,0 +1,21 @@
+class Solution {
+public:
+    int minAddToMakeValid(string S) {
+        string s="";
+        int ans=0;
+        for(char c:S)
+        {
+            if(c=='(')
+                s+='(';
+            else
+            {
+                if(s.size()>0&&s[s.size()-1]=='(')
+                    s.pop_back();
+                else
+                    ans++;
+            }
+        }
+        ans+=s.size();
+        return ans;
+    }
+};
