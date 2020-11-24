@@ -1,0 +1,73 @@
+class Solution {
+    int i=0;
+public:
+    bool isDigit(char c)
+    { return (c-'0'>=0 && c-'0'<=9); }
+    
+    string decodeString(string s) {
+        string decoded="",num="";
+        for(i;i<s.length();i++)
+        {
+            if(isDigit(s[i]))
+            {
+                while(isDigit(s[i]))
+                {num+=s[i++];}
+                i++;
+                int times = stoi(num);
+                string temp = decodeString(s);
+                for (int i = 1; i <= times; i++) {
+                    decoded += temp;
+                }
+                num = "";
+            }
+            else if (s[i] == ']') 
+                return decoded;
+            else 
+                decoded += s[i];
+        }
+        return decoded;
+    }
+};
+
+Method 2:
+
+class Solution {
+public:
+    string decodeString(string s) {
+        stack<char>st;
+        for(int i=0;i<s.size();i++)
+        {
+            if(s[i]!=']')
+                st.push(s[i]);
+            else
+            {
+                string curr="";
+                while(st.top()!='[')
+                {
+                    curr=st.top()+curr;
+                    st.pop();
+                }
+                st.pop();
+                string number="";
+                while(!st.empty() && isdigit(st.top()))
+                {
+                    number=st.top()+number;
+                    st.pop();
+                }
+                int k=stoi(number);
+                while(k--)
+                {
+                    for(int p=0; p<curr.size();p++)
+                        st.push(curr[p]);
+                }
+            }
+        }
+        s="";
+        while(!st.empty())
+        {
+            s=st.top()+s;
+            st.pop();
+        }
+        return s;
+    }
+};
