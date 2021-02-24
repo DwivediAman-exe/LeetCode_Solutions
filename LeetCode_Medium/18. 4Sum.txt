@@ -1,0 +1,73 @@
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        if(nums.size()<4)
+            return {};
+        vector<vector<int>>v;
+        sort(nums.begin(),nums.end());
+        for(int i=0;i<nums.size()-3;i++)
+        {
+            if(i>0 && nums[i]==nums[i-1]) continue;
+            for(int j=i+1;j<nums.size();j++)
+            {
+                if(j>i+1&&nums[j]==nums[j-1]) continue;
+                int l=j+1,r=nums.size()-1;
+                while(l<r)
+                {
+                    int sum=nums[i]+nums[j]+nums[l]+nums[r];
+                    if(sum==target)
+                    {
+                        v.push_back({nums[i],nums[j],nums[l],nums[r]});
+                        l++;r--;
+                        while(l<r && nums[l]==nums[l-1]) l++; 
+                        while(l<r && nums[r]==nums[r+1]) r--;
+                    }
+                    else if(sum<target)
+                        l++;
+                    else
+                        r--;
+                }
+            }
+        }
+        return v;
+    }
+};
+
+method 2;
+
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+    sort(begin(nums), end(nums));
+    return kSum(nums, target, 0, 4);
+}
+vector<vector<int>> kSum(vector<int>& nums, int target, int start, int k) {
+    vector<vector<int>> res;
+    if (start == nums.size() || nums[start] * k > target || target > nums.back() * k)
+        return res;
+    if (k == 2)
+        return twoSum(nums, target, start);
+    for (int i = start; i < nums.size(); ++i)
+        if (i == start || nums[i - 1] != nums[i])
+            for (auto &set : kSum(nums, target - nums[i], i + 1, k - 1)) {
+                res.push_back({nums[i]});
+                res.back().insert(end(res.back()), begin(set), end(set));
+            }
+    return res;
+}
+vector<vector<int>> twoSum(vector<int>& nums, int target, int start) {
+    vector<vector<int>> res;
+    int lo = start, hi = nums.size() - 1;
+    while (lo < hi) {
+        int sum = nums[lo] + nums[hi];
+        if (sum < target || (lo > start && nums[lo] == nums[lo - 1]))
+            ++lo;
+        else if (sum > target || (hi < nums.size() - 1 && nums[hi] == nums[hi + 1]))
+            --hi;
+        else
+            res.push_back({ nums[lo++], nums[hi--]});
+    }
+    return res;
+}
+    
+};
