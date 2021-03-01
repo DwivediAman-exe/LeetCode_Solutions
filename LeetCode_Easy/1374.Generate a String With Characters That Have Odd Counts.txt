@@ -1,0 +1,17 @@
+class Solution {
+public:
+    string generateTheString(int n) {
+        string s;
+        int flag=0;
+        if(n%2==0)
+        {
+            flag=1;
+            n--;
+        }
+        for(int i=0;i<n;i++)
+            s+='a';
+        if(flag==1)
+            s+='b';
+        return s;
+    }
+};
