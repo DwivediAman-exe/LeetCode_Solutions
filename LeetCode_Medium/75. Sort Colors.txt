@@ -1,0 +1,51 @@
+Method 1:  Normal method using loops to store frequency of 0's,1's,2's
+
+class Solution {
+public:
+    void sortColors(vector<int>& nums) {
+        int a=0,b=0,c=0;
+        for(int i=0;i<nums.size();i++)          
+        {
+            if(nums[i]==0)
+                a++;
+            else if(nums[i]==1)
+                b++;
+            else c++;
+        }
+        int i=0;
+        while(a--)
+            nums[i++]=0;
+        while(b--)
+            nums[i++]=1;
+        while(c--)
+            nums[i++]=2;
+    }
+};
+
+
+Method 2: Dutch national flag method
+
+class Solution {
+public:
+    void sortColors(vector<int>& nums) {
+        int low,mid,high;
+        low = mid = 0;
+        high= nums.size()-1;
+        while(mid<=high)
+        {
+            if(nums[mid] == 0)
+            {
+                swap(nums[low],nums[mid]);
+                low++;
+                mid++;
+            }
+            else if(nums[mid] == 1)
+                mid++;
+            else
+            {
+                swap(nums[mid],nums[high]);
+                high--;
+            }
+        }
+    }
+};
