@@ -1,0 +1,77 @@
+class Solution {
+public:
+    vector<vector<int>> imageSmoother(vector<vector<int>>& M) {
+        vector<vector<int>>M1(M.size(),vector<int>(M[0].size()));
+        int dir[9][2] = {{-1,-1},{0,-1},{1,-1},{1,0},{1,1},{0,1},{-1,1},{-1,0},{0,0}};
+        for(int i=0;i<M.size();i++)
+        {
+            for(int j=0;j<M[0].size();j++)
+            {
+                int c=0,sum=0,newx,newy;
+                for(int k=0;k<9;k++)
+                {
+                    newx = i + dir[k][0], newy = j + dir[k][1];
+                    if(newx>=0&&newy>=0&&newx<M.size()&&newy<M[0].size()) 
+                    {sum+=M[newx][newy];
+                    c++;}
+                }
+                M1[i][j]=sum/c;
+            }
+        }
+        return M1;
+    }
+};
+
+solution 2:
+
+class Solution {
+public:
+    vector<vector<int>> imageSmoother(vector<vector<int>>& M) {
+        int m = M.size();
+        int n = M[0].size();
+        vector<vector<int>> output(m, vector<int>(n));
+        for (int i=0; i<m; i++)
+        {
+            for (int j=0; j<n; j++)
+            {
+                int avg = M[i][j];
+                int count = 1;
+                if(i > 0){
+                    avg += M[i-1][j];
+                    count += 1;
+                }
+                if(j>0){
+                    avg += M[i][j-1];
+                    count += 1;
+                }
+                if(i<m-1){
+                    avg += M[i+1][j];
+                    count += 1;
+                }
+                if(j<n-1){
+                    avg += M[i][j+1];
+                    count += 1;
+                }
+                if(i>0 && j>0){
+                    avg += M[i-1][j-1];
+                    count += 1;
+                }
+                if(i>0 && j<n-1){
+                    avg += M[i-1][j+1];
+                    count += 1;
+                }
+                if(i<m-1 && j>0){
+                    avg += M[i+1][j-1];
+                    count += 1;
+                }
+                if(i<m-1 && j<n-1){
+                    avg += M[i+1][j+1];
+                    count += 1;
+                }
+                avg = avg / count;
+                output[i][j] = avg;
+            }
+        }
+        return output;
+    }
+};
