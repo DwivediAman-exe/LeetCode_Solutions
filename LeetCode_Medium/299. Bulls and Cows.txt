@@ -1,0 +1,28 @@
+class Solution {
+public:
+    string getHint(string s, string g) {
+        int f1[10]={};
+        int f2[10]={};
+        int a=0,b=0;
+        
+        for(int i=0;i<s.size();i++)
+            f1[s[i]-'0']++;
+        for(int i=0;i<g.size();i++)
+            f2[g[i]-'0']++;
+        
+        for(int i=0;i<s.size();i++)
+        {
+            if(s[i]==g[i])
+            {
+                a++;
+                f1[s[i]-'0']--;f2[s[i]-'0']--;
+            }
+        }
+        for(int i=0;i<10;i++)
+            b+=min(f1[i],f2[i]);
+        
+        cout<<a<<"A"<<b<<"B";
+        string ans=to_string(a)+"A"+to_string(b)+"B";
+        return ans;
+    }
+};
