@@ -1,0 +1,120 @@
+You are given the root of a binary search tree (BST), where the values of exactly two nodes of the tree were swapped by mistake. Recover the tree without changing its structure.
+
+Input: root = [1,3,null,null,2]
+Output: [3,1,null,null,2]
+Explanation: 3 cannot be a left child of 1 because 3 > 1. Swapping 1 and 3 makes the BST valid.
+
+Method 1: In-order Traversal 
+TC - O(N) SC - O(N) (function stack space)
+
+class Solution {
+public:
+	void Util(TreeNode* root, TreeNode* &prev, TreeNode* &first, TreeNode* &second) {
+		if(!root)
+			return;
+
+		Util(root->left, prev, first, second);
+		if(prev != NULL && prev->val > root->val) {
+			if(first == NULL) {                          // incase inorder adjacent are swapped, then there will be only 1 pair     
+				first = prev;                            // stores 1st element of 1st pair
+				second = root;                           // stores 2nd element of 1st pair
+			}
+			else
+				second = root;                          // stores 2nd element of 2nd pair
+		}
+
+		prev = root;
+		Util(root->right, prev, first, second);
+	}
+    void recoverTree(TreeNode* root) {
+        TreeNode* first = NULL;
+		TreeNode* second = NULL;
+		TreeNode* prev = NULL;
+
+		Util(root, prev, first, second);
+		swap(first->val, second->val);
+    }
+};
+
+Method 2: In-order Traversal 
+TC - O(N) SC - O(N) (stack data structure is used)
+
+class Solution {
+public:
+    void recoverTree(TreeNode* root) {
+        TreeNode* first = NULL;
+		TreeNode* second = NULL;
+		TreeNode* prev = NULL;
+		stack<TreeNode*>s;
+		while(root || !s.empty())
+		{
+			while(root) {
+				s.push(root);
+				root = root->left;
+			}
+			root = s.top();
+			s.pop();
+			
+			if(prev != NULL && prev->val >= root->val) {
+				if(first == NULL) {
+                    first = prev;
+                    second = root;
+                }
+                else
+                    second = root;
+            }
+
+			prev = root;
+			root = root->right;
+		}
+		swap(first->val, second->val);
+    }
+};
+
+Method 3: Morris Traversal 
+TC - O(N) SC - O(1)
+
+class Solution {
+public:
+    TreeNode* first = NULL;
+	TreeNode* second = NULL;
+	TreeNode* prev = NULL;
+	void check(TreeNode* curr) {                                       // to check the swapped pair
+		if(prev != NULL && prev->val >= curr->val) {
+			if(first == NULL) {
+				first = prev;
+				second = curr;
+			}
+			second = curr;
+		}
+		prev = curr;
+	}
+	void morrisTrav(TreeNode* root) {                                  // morris traversal
+		while(root)
+		{
+			if(root->left == NULL) {
+				check(root);
+				root = root->right;
+			}
+			else {
+				TreeNode* pred = root->left;
+				while(pred->right != NULL && pred->right != root) 
+					pred = pred->right;
+				
+				if(pred->right == NULL) {
+					pred->right = root;
+					root = root->left;
+				}
+				else {
+					pred->right = NULL;
+					check(root);
+					root = root->right;
+				}
+			}
+		}
+	}
+	void recoverTree(TreeNode* root) {
+		morrisTrav(root);
+		swap(first->val, second->val);
+	}
+};
