@@ -20,7 +20,7 @@ public:
     }
 };
 
-Method 1: BFS (Iterative)
+Method 2: BFS (Iterative)
 TC - O(N) SC - O(N) in worst case and O(logN) in best case
 
 class Solution {

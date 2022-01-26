@@ -1,0 +1,53 @@
+Given the root of a binary tree, check whether it is a mirror of itself (i.e., symmetric around its center).
+
+Input: root = [1,2,2,3,4,4,3]
+Output: true
+
+Method 1: DFS (recursive)
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    bool check(TreeNode* r1, TreeNode* r2) {
+        if(!r1 && !r2)
+            return true;
+        if(!r1 || !r2)
+            return false;
+        if(r1->val != r2->val)
+            return false;
+        return check(r1->left, r2->right) && check(r1->right, r2->left);
+    }
+    bool isSymmetric(TreeNode* root) {
+        return check(root->left, root->right);
+    }
+};
+
+Method 2: BFS (Iterative)
+TC - O(N) SC - O(N) in worst case and O(logN) in best case
+
+class Solution {
+public:
+    bool isSymmetric(TreeNode* root) {
+        queue<TreeNode*> queue;
+        queue.push(root);                 // two times added to check for left and right child
+        queue.push(root);
+		while(!queue.empty())
+		{
+			TreeNode* lchild = queue.front();
+            queue.pop();
+            TreeNode* rchild = queue.front();
+            queue.pop();
+			if(!lchild && !rchild)
+                continue;
+            if(!lchild || !rchild)
+                return false;
+            if(lchild->val != rchild->val)
+                return false;
+			queue.push(lchild->left);
+            queue.push(rchild->right);
+            queue.push(lchild->right);
+            queue.push(rchild->left);
+		}
+		return true;
+    }
+};
