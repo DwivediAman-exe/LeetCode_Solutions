@@ -1,0 +1,47 @@
+Given the root of a binary tree, return its maximum depth.
+A binary tree's maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.
+
+Input: root = [3,9,20,null,null,15,7]
+Output: 3
+
+Method 1: DFS
+TC - O(N) SC - O(N)
+
+class Solution { 
+public:
+    int maxDepth(TreeNode* root) {
+        if(!root)
+            return 0;
+        int l = maxDepth(root->left);
+        int r = maxDepth(root->right);
+        return max(l,r)+1;
+    }
+};
+
+Method 2: BFS
+TC - O(N) SC - O(N)
+
+class Solution { 
+public:
+    int maxDepth(TreeNode* root) {
+        if(!root)
+            return 0; 
+        
+        queue<TreeNode*> q;
+        q.push(root);
+        int depth=0;
+        while (!q.empty()) 
+        {
+            ++depth;
+            int s=q.size();
+            for (int i=0; i<s; i++)
+            {
+                TreeNode* front=q.front();
+                q.pop();
+                if (front->left) q.push(front->left);
+                if (front->right) q.push(front->right);
+            }
+        }
+        return depth;
+    }
+};
