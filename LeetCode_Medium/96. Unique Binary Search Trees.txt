@@ -1,0 +1,101 @@
+Given an integer n, return the number of structurally unique BST's (binary search trees) which has exactly n nodes of unique values from 1 to n.
+
+Input: n = 3
+Output: 5
+
+Method 1: Recursive (TLE)
+TC - O(3^N) SC - O(1)
+Catlan(3) = Co*c2 + c1*c1 + c2*co
+
+class Solution {
+public:
+    int catlanNumber(int n) {
+        if(n<=1)
+            return 1;
+        
+        int result = 0;
+        for(int i=0;i<n;i++) 
+            result += catlanNumber(i) * catlanNumber(n-i-1);
+        
+        return result;
+    }
+    int numTrees(int n) {
+        return catlanNumber(n);
+    }
+};
+
+Method 2: Dynammic Programming 
+TC - O(N*N) SC - O(N)
+
+a) Tabulation
+class Solution {
+public:
+    int catlanNumber(int n) {
+        int dp[n+1];
+		memset(dp, 0, sizeof(dp));
+		dp[0] = 1, dp[1] = 1;
+		
+		for(int i=2;i<=n;i++)
+			for(int j=0;j<i;j++)
+				dp[i] += dp[j] * dp[i-j-1];
+
+		return dp[n];
+    }
+    int numTrees(int n) {
+        return catlanNumber(n);
+    }
+};
+
+b) Memoization
+class Solution {
+public:
+    int dp[21]={};
+    int catlanNumber(int n) {
+        if(n<=1)
+            return 1;
+        if(dp[n])
+            return dp[n];
+        
+        for(int i=0;i<n;i++) 
+            dp[n] += catlanNumber(i) * catlanNumber(n-i-1);
+        
+        return dp[n];
+    }
+    int numTrees(int n) {
+        return catlanNumber(n);
+    }
+};
+
+
+Method 3: Binomial Coefficient 
+TC - O(N) SC - O(1)
+Catalan Number (2*n)! / ((n+1)! * n!)
+
+class Solution {
+public:
+    long nCr(int n, int r) {
+        long ans = 1;
+        for(int i = 0; i < r; i++) {
+            ans *= n-i;
+            ans /= i+1;
+        }
+        return ans;   
+    }
+    int numTrees(int n) {
+        return nCr(2*n, n) / (n + 1);
+    }
+};
+
+Method 4: Recurrence relation 
+TC - O(N) SC - O(1)
+Co = 1 and Cn+1 = ((4n+2)/(n+2)) * Cn 
+
+class Solution {
+public:
+    int numTrees(int n) {
+        long ans = 1;
+        for(int i = 0; i < n; i++) 
+            ans *= (4*i+2) / (i+(double)2);
+        return ans;
+    }
+};
