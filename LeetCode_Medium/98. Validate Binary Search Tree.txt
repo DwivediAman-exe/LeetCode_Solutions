@@ -1,0 +1,120 @@
+Given the root of a binary tree, determine if it is a valid binary search tree (BST).
+
+Input: root = [2,1,3]
+Output: true
+
+Method 1: Range check for every node (Buggy solution if root val ==  INT_MIN or INT_MAX)
+TC - O(N) SC - O(1)
+
+class Solution {
+public:
+	bool checkBST(TreeNode* root, int min, int max) {
+		if(!root)
+			return true;
+		
+		if(root->val > max || root->val < min)
+			return false;
+
+		return checkBST(root->left, min, root->val-1) && checkBST(root->right, root->val+1, max); 
+	}
+    bool isValidBST(TreeNode* root) {
+        return checkBST(root, INT_MIN, INT_MAX);
+    }
+};
+
+Method 2: Using Null pointer in place of INT_MIN and INT_MAX
+TC - O(N) SC - O(1)
+
+class Solution {
+public:
+	bool checkBST(TreeNode* root, TreeNode* l, TreeNode* r) {
+		if(!root)
+			return true;
+		
+		if(l != NULL && l->val >= root->val)
+			return false;
+		if(r != NULL && r->val <= root->val)
+			return false;
+
+		return checkBST(root->left, l, root) && checkBST(root->right, root, r); 
+	}
+    bool isValidBST(TreeNode* root) {
+        return checkBST(root, NULL, NULL);
+    }
+};
+
+Method 3: In-Order Traversal recursive
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    void preorder(TreeNode* root, vector<int>& arr) {
+        if(!root)
+            return;
+        preorder(root->left,arr);
+        arr.push_back(root->val);
+        preorder(root->right,arr);
+    }
+    bool isValidBST(TreeNode* root) {
+        vector<int>arr;
+        preorder(root, arr);
+        
+        for(int i=1;i<arr.size();i++)
+            if(arr[i] <= arr[i-1])
+                return false;
+        
+        return true;
+    }
+};
+
+Method 4: In-Order Traversal and keeping track of previous node recursive
+TC - O(N) SC - O(1)
+
+class Solution {
+public:
+	bool checkBST(TreeNode* root, TreeNode* &prev) {
+		if(root)
+		{
+			if(!checkBST(root->left, prev))
+				return false;
+			
+			if(prev != NULL && root->val <= prev->val)
+				return false;
+			
+			prev = root;
+			return checkBST(root->right, prev);
+		}
+        return true;
+	}
+    bool isValidBST(TreeNode* root) {
+        TreeNode* prev = NULL;
+		return checkBST(root, prev);
+    }
+};
+
+Method 5: In-Order Traversal and keeping track of previous node iterative
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    bool isValidBST(TreeNode* root) {
+        stack<TreeNode*>s;
+        TreeNode* prev = NULL;
+        while(!s.empty() || root)
+        {
+            while(root) {
+                s.push(root);
+                root = root->left;
+            }
+            root = s.top();
+            s.pop();
+            
+            if(prev != NULL && prev->val >= root->val)
+                return false;
+            
+            prev = root;
+            root = root->right;
+        }
+        return true;
+    }
+};
