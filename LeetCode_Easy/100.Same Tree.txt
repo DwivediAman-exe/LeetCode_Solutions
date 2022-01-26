@@ -1,40 +1,51 @@
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}class Solution {
-public:
-    bool isSameTree(TreeNode* p, TreeNode* q) {
-        if ((!p) || (!q))
-        {
-            if ((!p) && (!q))
-                return true;
-            else return false;
-        }
-        if (p->val != q->val)
-            return false;
-        return isSameTree(p->left, q->left) && isSameTree(p->right, q->right);
+Given the roots of two binary trees p and q, write a function to check if they are the same or not.
+Two binary trees are considered the same if they are structurally identical, and the nodes have the same value.
 
-    }
-};
- * };
- */
+Input: p = [1,2,3], q = [1,2,3]
+Output: true
+
+Method 1: DFS (Recursive) 
+TC - O(N) SC - O(N) in worst case and O(logN) in best case
+
 class Solution {
 public:
     bool isSameTree(TreeNode* p, TreeNode* q) {
-        if ((!p) || (!q))
-        {
-            if ((!p) && (!q))
-                return true;
-            else return false;
-        }
-        if (p->val != q->val)
+        if(!p && !q)
+            return true;
+        if(!q || !p)
+            return false;
+        if(p->val != q->val)
             return false;
         return isSameTree(p->left, q->left) && isSameTree(p->right, q->right);
+    }
+};
 
+Method 1: BFS (Iterative)
+TC - O(N) SC - O(N) in worst case and O(logN) in best case
+
+class Solution {
+public:
+    bool isSameTree(TreeNode* p, TreeNode* q) {
+        queue<TreeNode*> queue;
+        queue.push(p);
+        queue.push(q);
+        while(!queue.empty())
+        {
+            TreeNode* r1 = queue.front();
+            queue.pop();
+            TreeNode* r2 = queue.front();
+            queue.pop();
+            if(!r1 && !r2)
+                continue;
+            if(!r1 || !r2)
+                return false;
+            if(r1->val != r2->val)
+                return false;
+            queue.push(r1->left);
+            queue.push(r2->left);
+            queue.push(r1->right);
+            queue.push(r2->right);
+        }
+        return true;
     }
 };
