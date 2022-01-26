@@ -35,7 +35,7 @@ public:
     }
 };
 
-Method 2: DFS
+Method 2: DFS (preorder)
 TC - O(N) SC-O(N)
 
 class Solution {
