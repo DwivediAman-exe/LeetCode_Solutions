@@ -1,0 +1,59 @@
+Given the root of a binary tree, return the level order traversal of its nodes' values. (i.e., from left to right, level by level).
+
+Input: root = [3,9,20,null,null,15,7]
+Output: [[3],[9,20],[15,7]]
+
+Method 1: BFS 
+TC - O(N) SC-O(N)
+
+class Solution {
+public:
+    vector<vector<int>> levelOrder(TreeNode* root) {
+        if(!root)
+            return {};
+        queue<TreeNode*>q;
+        q.push(root);
+        vector<vector<int>>ans;
+        while(!q.empty())
+        {
+            int len = q.size();
+            vector<int>v;
+            for(int i=0;i<len;i++)
+            {
+                TreeNode* curr = q.front();
+                q.pop();
+                v.push_back(curr->val);
+                
+                if(curr->left)
+                    q.push(curr->left);
+                if(curr->right)
+                    q.push(curr->right);
+            }
+            ans.push_back(v);
+        }
+        return ans;
+    }
+};
+
+Method 2: DFS
+TC - O(N) SC-O(N)
+
+class Solution {
+public:
+	void Util(TreeNode* root, int depth, vector<vector<int>>& ans) {
+		if(!root)
+			return;
+		
+		if(ans.size() == depth)
+			ans.push_back(vector<int>());           // pushing new empty vector for each level
+
+		ans[depth].push_back(root->val);
+		Util(root->left, depth+1, ans);
+		Util(root->right, depth+1, ans);
+	}
+    vector<vector<int>> levelOrder(TreeNode* root) {
+		vector<vector<int>>ans;
+		Util(root, 0, ans);
+		return ans;
+	}
+};
