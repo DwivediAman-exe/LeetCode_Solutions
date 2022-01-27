@@ -1,0 +1,57 @@
+Given a binary tree, determine if it is height-balanced.
+For this problem, a height-balanced binary tree is defined as:
+a binary tree in which the left and right subtrees of every node differ in height by no more than 1.
+
+Input: root = [3,9,20,null,null,15,7]
+Output: true
+
+Method 1: 
+TC - O(N*N) SC - O(N) (recursion stack space)
+
+class Solution {
+public:
+	int height(TreeNode *root) {
+        if (!root)
+            return 0;
+        int l = height(root->left);
+        int r = height(root->right);
+        return 1 + max(l, r);
+    }
+    bool isBalanced(TreeNode* root) {
+        if (!root)
+            return true;
+        
+        int hl = height(root->left);
+        int hr = height(root->right);
+        
+        if (abs(hl-hr) <=1 && isBalanced(root->left) && isBalanced(root->right))
+            return true;
+        return false;
+    }
+};
+
+Method 2: 
+TC - O(N) SC - O(N) (recursion stack space)
+
+class Solution {
+public:
+	int checkBalance(TreeNode* root, bool &ans) {
+        if(!root) 
+            return 0;
+		if(ans == false)
+			return 0;
+
+        int l = checkBalance(root->left, ans);
+        int r = checkBalance(root->right, ans);
+        if(abs(l-r) > 1)  
+            ans = false;
+
+        return max(l,r)+1;
+    }
+    
+    bool isBalanced(TreeNode* root) {
+        bool ans = true;
+		checkBalance(root, ans);
+        return ans;
+    }
+};
