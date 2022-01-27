@@ -1,0 +1,80 @@
+Given the root of a binary tree, flatten the tree into a "linked list":
+The "linked list" should use the same TreeNode class where the right child pointer points to the next node in the list and the left child pointer is always null.
+The "linked list" should be in the same order as a pre-order traversal of the binary tree.
+
+Input: root = [1,2,5,3,4,null,6]
+Output: [1,null,2,null,3,null,4,null,5,null,6]
+
+Method 1: Recursive
+TC - O(N) SC - O(N) (recursion stack method)
+
+class Solution {
+public:
+	TreeNode* Util(TreeNode* root, TreeNode* &prev) {
+		if(!root)
+			return NULL;
+		Util(root->right, prev);
+		Util(root->left, prev);
+		root->right = prev;
+		root->left = NULL;
+		prev = root;
+		return root;
+	}
+    void flatten(TreeNode* root) {
+        TreeNode* prev = NULL;
+        root = Util(root, prev);
+    }
+};
+
+Method 2: Iterative
+TC - O(N) SC - O(N) 
+
+class Solution {
+public:
+    void flatten(TreeNode* root) {
+        if(!root)
+			return;
+		stack<TreeNode*>s; 
+        s.push(root); 
+        while(!s.empty()) 
+		{
+            TreeNode* cur = s.top(); 
+            s.pop(); 
+            
+            if(cur->right) 
+                s.push(cur->right); 
+            if(cur->left) 
+                s.push(cur->left); 
+            if(!s.empty()) 
+                cur->right = s.top(); 
+
+            cur->left = NULL;
+        }
+    }
+};
+
+Method 3: Space optimizated
+TC - O(N) SC - O(1) 
+
+class Solution {
+public:
+    TreeNode* prev = NULL;
+    void flatten(TreeNode* root) 
+    {
+        TreeNode* cur = root;
+		while (cur)
+		{
+			if(cur->left)
+			{
+				TreeNode* pre = cur->left;
+				while(pre->right)
+					pre = pre->right;
+				
+				pre->right = cur->right;
+				cur->right = cur->left;
+				cur->left = NULL;
+			}
+			cur = cur->right;
+		}
+    }
+};
