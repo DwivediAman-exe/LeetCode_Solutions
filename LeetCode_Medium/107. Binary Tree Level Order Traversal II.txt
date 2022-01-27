@@ -1,0 +1,101 @@
+Given the root of a binary tree, return the bottom-up level order traversal of its nodes' values. (i.e., from left to right, level by level from leaf to root).
+
+Input: root = [3,9,20,null,null,15,7]
+Output: [[15,7],[9,20],[3]]
+
+Method 1: BFS
+TC - O(N) SC - O(N) 
+
+class Solution {
+public:
+    vector<vector<int>> levelOrderBottom(TreeNode* root) {
+        vector<vector<int>>ans;
+        if(!root)
+            return ans;
+        
+        queue<TreeNode*>q;
+        q.push(root);
+        while(!q.empty())
+        {
+            int l = q.size();
+            vector<int>v;
+            for(int i=0;i<l;i++) {
+                TreeNode* temp = q.front();
+                q.pop();
+                
+                v.push_back(temp->val);
+                
+                if(temp->left) 
+                    q.push(temp->left);
+                if(temp->right) 
+                    q.push(temp->right);
+            }
+            ans.push_back(v);
+        }
+        reverse(ans.begin(),ans.end());
+        return ans;
+    }
+};
+
+Method 2: Alternate DFS (using stack)
+TC - O(N) SC - O(N) 
+
+class Solution {
+public:
+    vector<vector<int>> levelOrderBottom(TreeNode* root) {
+        stack<vector<int>>st;
+        queue<TreeNode*>q;
+
+        if(root!=NULL)
+			q.push(root);
+
+        while(!q.empty())
+		{
+            int size = q.size();
+            vector<int>temp;
+            while(size--) {
+                TreeNode* curr=q.front();
+                q.pop();
+
+                temp.push_back(curr->val);
+
+                if(curr->left)
+					q.push(curr->left);
+                if(curr->right)
+					q.push(curr->right);
+            }
+            st.push(temp);
+        }
+
+        vector<vector<int>> res;
+        while(!st.empty()) {
+            res.push_back(st.top());
+            st.pop();
+        }
+        return res;
+    }
+};
+
+Method 2: DFS
+TC - O(N) SC - O(N) 
+
+class Solution {
+public: 
+    void Util(TreeNode* root, int level, vector<vector<int>>& ans) {
+        if (root == NULL) 
+            return;
+
+        if (level == ans.size()) 
+            ans.push_back(vector<int>()); 
+
+        ans[level].push_back(root->val); 
+        Util(root->left, level+1, ans); 
+        Util(root->right, level+1, ans);
+    }
+    vector<vector<int> > levelOrderBottom(TreeNode *root) {
+        vector<vector<int>>ans;
+        Util(root, 0, ans);
+		reverse(ans.begin(), ans.end());
+        return ans;
+    }
+};
