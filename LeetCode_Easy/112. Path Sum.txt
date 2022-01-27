@@ -1,0 +1,63 @@
+Given the root of a binary tree and an integer targetSum, return true if the tree has a root-to-leaf path such that adding up all the values along the path equals targetSum.
+A leaf is a node with no children.
+
+Input: root = [5,4,8,11,null,13,4,7,2,null,null,null,1], targetSum = 22
+Output: true
+Explanation: The root-to-leaf path with the target sum is shown.
+
+Method 1: DFS
+TC - O(N) SC - O(N) 
+
+class Solution {
+private:
+    void Util(TreeNode* root, int sum, bool& ans) {
+        if(!root)
+            return;
+        
+        sum = sum-root->val;
+        if((!root->left && !root->right) && sum == 0) {
+            ans = true;
+            return;
+        }
+        
+        Util(root->left, sum, ans);
+        Util(root->right, sum, ans);
+    }
+public:
+    bool hasPathSum(TreeNode* root, int targetSum) {
+        if(!root)
+            return false;
+        bool ans = false;
+        Util(root, targetSum, ans);
+        return ans;
+    }
+};
+
+Method 2: BFS
+TC - O(N) SC - O(N) 
+
+class Solution {
+public:
+    bool hasPathSum(TreeNode* root, int targetSum) {
+        if(!root)
+			return false;
+        
+        queue<pair<TreeNode*,int>>q;
+        q.emplace(root, targetSum - root->val);
+        
+        while(!q.empty())
+        {
+            auto temp=q.front();
+            q.pop();
+            
+            if(!temp.first->left && !temp.first->right && temp.second==0)
+				return true;
+            
+            if(temp.first->left) 
+				q.push({temp.first->left,temp.second-temp.first->left->val});
+            if(temp.first->right) 
+				q.push({temp.first->right,temp.second-temp.first->right->val});
+        }
+        return false;
+    }
+};
