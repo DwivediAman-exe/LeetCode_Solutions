@@ -1,0 +1,70 @@
+Given two integer arrays preorder and inorder where preorder is the preorder traversal of a binary tree and inorder is the inorder traversal of the same tree, construct and return the binary tree.
+
+Input: preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]
+Output: [3,9,20,null,null,15,7]
+
+Method 1: Recursion 
+TC - O(N*N) SC - O(1)
+
+class Solution {
+public:
+    int preIndex = 0;
+    int searchIndex(vector<int>& inorder, TreeNode* root, int start, int end) { 
+        int index = -1;
+        for(int i=start;i<=end;i++) {
+            if(root->val == inorder[i]) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+    TreeNode* Util(vector<int>& inorder, vector<int>& preorder, int start, int end)     {
+        if(start > end)
+            return NULL;
+        
+        TreeNode* root = new TreeNode(preorder[preIndex++]);
+        if(start == end)
+            return root;
+        
+        int index = searchIndex(inorder, root, start, end);
+        root->left = Util(inorder, preorder, start, index-1);
+        root->right = Util(inorder, preorder, index+1, end);
+        
+        return root;
+    }
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        int n = preorder.size();
+        return Util(inorder, preorder, 0, n-1);
+    }
+};
+
+Method 2: Recursion + Hashing 
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    TreeNode* Util(vector<int>& inorder, vector<int>& preorder, int &preIndex, int start, int end, unordered_map<int,int>& dict)     {
+        if(start > end)
+            return NULL;
+        
+        TreeNode* root = new TreeNode(preorder[preIndex++]);
+        
+        int index = dict[root->val];
+        root->left = Util(inorder, preorder, preIndex, start, index-1, dict);
+        root->right = Util(inorder, preorder, preIndex, index+1, end, dict);
+        
+        return root;
+    }
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        int preIndex = 0;
+        int n = inorder.size();
+        
+        unordered_map<int,int>dict;
+        for(int i=0;i<n;i++)
+            dict[inorder[i]] = i;
+        
+        return Util(inorder, preorder, preIndex, 0, n-1, dict);
+    }
+};
+

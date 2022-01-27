@@ -1,0 +1,69 @@
+Given two integer arrays inorder and postorder where inorder is the inorder traversal of a binary tree and postorder is the postorder traversal of the same tree, construct and return the binary tree.
+
+Input: inorder = [9,3,15,20,7], postorder = [9,15,7,20,3]
+Output: [3,9,20,null,null,15,7]
+
+Method 1: Recursion 
+TC - O(N*N) SC - O(1)
+
+class Solution {
+public:
+    int searchIndex(vector<int>& inorder, TreeNode* root, int start, int end) {
+        int index = -1;
+        for(int i=start;i<=end;i++) {
+            if(root->val == inorder[i]) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+    TreeNode* Util(vector<int>& inorder, vector<int>& postorder, int start, int end, int &postIndex) {
+        if(start > end)
+            return NULL;
+        
+        TreeNode* root = new TreeNode(postorder[postIndex--]);
+        
+        int index = searchIndex(inorder, root, start, end);
+        
+        root->right = Util(inorder, postorder, index+1, end, postIndex);
+        root->left = Util(inorder, postorder, start, index-1, postIndex);
+        return root;
+    }
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+        int n = inorder.size();
+        int postIndex = n-1;
+        return Util(inorder, postorder, 0, n-1, postIndex);
+    }
+};
+
+Method 2: Recursion + Hashing 
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    unordered_map<int,int>dict;
+    TreeNode* build(vector<int>& inorder, vector<int>& postorder, int &postIndex, int left, int right)
+    {
+         if(left>right)
+            return NULL;
+
+        int pivot = dict[postorder[postIndex]];
+        postIndex--;
+        TreeNode* node=new TreeNode(inorder[pivot]);
+        
+        node->right=build(inorder,postorder,postIndex,pivot+1,right);
+        node->left=build(inorder,postorder,postIndex,left,pivot-1);
+        return node;
+    }
+    
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+        int n = postorder.size();
+		int postIndex=n-1;
+
+        for(int i=0;i<n;i++)
+            dict[inorder[i]]=i;
+        
+        return build(inorder,postorder, postIndex, 0,n-1);
+    }
+};
