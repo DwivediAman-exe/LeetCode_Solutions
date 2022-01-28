@@ -1,0 +1,102 @@
+You are given the root of a binary tree containing digits from 0 to 9 only.
+Each root-to-leaf path in the tree represents a number.
+For example, the root-to-leaf path 1 -> 2 -> 3 represents the number 123.
+Return the total sum of all root-to-leaf numbers. Test cases are generated so that the answer will fit in a 32-bit integer.
+A leaf node is a node with no children.
+ 
+Input: root = [1,2,3]
+Output: 25
+Explanation:
+The root-to-leaf path 1->2 represents the number 12.
+The root-to-leaf path 1->3 represents the number 13.
+Therefore, sum = 12 + 13 = 25.
+
+Method 1: DFS
+TC - O(N) SC - O(N) (function call stack space/ height of tree)
+
+class Solution {
+public:
+    void Util(TreeNode* root, int curr_sum, int &result) {
+        if(!root)
+            return;
+        
+        curr_sum = curr_sum*10 + root->val;
+        if(!root->left && !root->right) {
+            result = result + curr_sum;
+        }
+        
+        Util(root->left, curr_sum, result);
+        Util(root->right, curr_sum, result);
+    }
+    int sumNumbers(TreeNode* root) {
+        int result = 0;
+        int curr_sum = 0;
+        Util(root, curr_sum, result);
+        return result;
+    }
+};
+
+Method 1: BFS
+TC - O(N) SC - O(N) 
+
+class Solution {
+public:
+    int sumNumbers(TreeNode* root) {
+        int result = 0;
+        queue<pair<TreeNode*, int>>q;
+		q.emplace(root, 0);
+
+		while(!q.empty())
+		{
+			auto [node, curr_sum] = q.front();
+			q.pop();
+
+			curr_sum = curr_sum*10 + node->val;
+			if(node->left)
+				q.emplace(node->left, curr_sum);
+			if(node->right)
+				q.emplace(node->right, curr_sum);
+
+			if(!node->left && !node->right)
+				result += curr_sum;
+		}
+		return result;
+    }
+};
+
+Method 1: Morris Traversal
+TC - O(N) SC - O(1) 
+
+class Solution {
+public:
+    int sumNumbers(TreeNode* root) {
+        int sum = 0, cur = 0, depth = 0;
+        while(root) 
+		{
+            if(root -> left) 
+			{
+                auto pre = root -> left;
+                depth = 1;
+                while(pre -> right && pre -> right != root) 
+                    pre = pre -> right, depth++;
+                if(!pre -> right) {
+                    pre -> right = root;
+                    cur = cur * 10 + root -> val;
+                    root = root -> left;
+                } else {
+                    pre -> right = nullptr;
+                    if(!pre -> left) sum += cur;
+                    cur /= pow(10, depth);
+                    root = root -> right;
+                }
+            }
+			else
+			{
+                cur = cur * 10 + root -> val;
+                if(!root -> right) sum += cur;
+                root = root -> right;
+            }
+        }
+        return sum;
+    }
+};
