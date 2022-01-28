@@ -1,0 +1,83 @@
+144. Binary Tree Preorder TraversalGiven the root of a binary tree, return the preorder traversal of its nodes' values.
+
+Input: root = [1,null,2,3]
+Output: [1,2,3]
+
+Method 1: Recursive
+TC - O(N), SC - O(N) worst case and O(LogN) on average
+
+class Solution {
+public:
+    void Util(TreeNode* root, vector<int> &ans)
+    {
+        if(root==NULL)
+            return;
+        ans.push_back(root->val);
+        Util(root->left, ans);
+        Util(root->right, ans);
+    }
+	vector<int> preorderTraversal(TreeNode* root) {
+        vector<int>ans;
+		Util(root, ans);
+        return ans;
+    }
+};
+
+Method 2: Iterative stack 
+TC - O(N), SC - O(N)   
+
+class Solution {
+public:
+	vector<int> preorderTraversal(TreeNode* root) {
+        if(!root)
+			return {};
+		vector<int>ans;
+		stack<TreeNode*>s;
+		s.push(root);
+		while(!s.empty())
+		{
+			TreeNode* curr = s.top(); s.pop();
+			ans.push_back(curr->val);
+			if(curr->right)
+				s.push(curr->right);
+			if(curr->left)
+				s.push(curr->left);
+		}
+		return ans;
+    }
+};
+
+Method 3: Morris traversal
+TC - O(N), SC - O(1)
+
+class Solution {
+public:
+	vector<int> preorderTraversal(TreeNode* root) {
+        if(!root)
+			return {};
+		vector<int>ans;
+		while(root)
+		{
+			if(root->left == NULL) {
+				ans.push_back(root->val);
+				root = root->right;
+			}
+			else {
+				TreeNode* pred = root->left;
+				while(pred->right && pred->right != root) {
+					pred = pred->right;
+				}
+				if(pred->right == NULL) {
+					pred->right = root;
+					ans.push_back(root->val);
+					root = root->left;
+				}
+				else {
+					pred->right = NULL;
+					root = root->right;
+				}
+			}
+		}
+		return ans;
+    }
+};
