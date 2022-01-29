@@ -1,0 +1,39 @@
+Given a binary tree where all the right nodes are either leaf nodes with a sibling (a left node that shares the same parent node) or empty, flip it upside down and turn it into a tree where the original right nodes turned into left leaf nodes. Return the new root.
+
+Method 1: Recursive
+TC - O(N) SC - O(N)
+
+class Solution {
+    TreeNode* upsideDownBinaryTree(TreeNode* root) {
+        if (root == NULL || root->left == NULL) {
+            return root;
+        }
+
+        TreeNode* newRoot = upsideDownBinaryTree(root->left);
+        root->left->left = root->right;
+        root->left->right = root;
+        root->left = NULL;
+        root->right = NULL;
+        return newRoot;
+    }
+}
+
+Method 1: Iterative
+TC - O(N) SC - O(1)
+
+class Solution {
+    TreeNode* upsideDownBinaryTree(TreeNode* root) {
+        TreeNode* curNode = root, *preNode = NULL, *nextNode = NULL, *tempNode = NULL;
+
+        while (curNode != NULL)
+		{
+            nextNode = curNode->left;
+            curNode->left = tempNode;
+            tempNode = curNode->right;
+            curNode->right = preNode;
+            preNode = curNode;
+            curNode = nextNode;
+        }
+        return preNode;
+    }
+}

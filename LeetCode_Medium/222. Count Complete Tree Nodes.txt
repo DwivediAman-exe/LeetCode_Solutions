@@ -1,0 +1,62 @@
+Given the root of a complete binary tree, return the number of the nodes in the tree.
+According to Wikipedia, every level, except possibly the last, is completely filled in a complete binary tree, and all nodes in the last level are as far left as possible. It can have between 1 and 2h nodes inclusive at the last level h.
+
+Input: root = [1,2,3,4,5,6]
+Output: 6
+
+Method 1: DFS
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    void Util(TreeNode* root, int &ans)
+    {
+        if(root==NULL)
+            return;
+        ans++;
+        Util(root->left, ans);
+        Util(root->right, ans);
+    }
+    int countNodes(TreeNode* root) {
+        if(!root)
+            return 0;
+        int ans = 0;
+		Util(root, ans);
+        return ans;
+    }
+};
+
+Method 2: Using fact 2^height - 1
+TC - O(LogN*LogN) SC - O(N)
+
+class Solution {
+public:
+    int left_height(TreeNode* root) {
+        int lh = 0;
+        while(root) {
+            lh++;
+            root = root->left;
+        }
+        return lh;
+    }
+    int right_height(TreeNode* root) {
+        int rh = 0;
+        while(root) {
+            rh++;
+            root = root->right;
+        }
+        return rh;
+    }
+    int countNodes(TreeNode* root) {
+        if(!root)
+            return 0;
+
+        int lh = left_height(root);
+        int rh = right_height(root);
+
+        if(lh == rh)
+            return pow(2, lh) - 1;
+
+        return 1 + countNodes(root->left) + countNodes(root->right);
+    }
+};
