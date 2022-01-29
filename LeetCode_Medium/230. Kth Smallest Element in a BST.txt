@@ -1,0 +1,90 @@
+Given the root of a binary search tree, and an integer k, return the kth smallest value (1-indexed) of all the values of the nodes in the tree.
+
+Input: root = [3,1,4,null,2], k = 1
+Output: 1
+
+Method 1: Inorder Traversal
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    void inorder(TreeNode* root, vector<int>& v) {
+        if(!root)
+            return;
+        inorder(root->left,v);
+        v.push_back(root->val);
+        inorder(root->right,v);
+    }
+    int kthSmallest(TreeNode* root, int k) {
+        vector<int>v;
+        inorder(root,v);
+        return v[k-1];
+    }
+};
+
+Method 2: Inorder Traversal without array
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    TreeNode* Util(TreeNode* root, int &k) {
+        if(!root)
+            return NULL;
+        
+        TreeNode* left = Util(root->left, k);
+        if(left != NULL)
+            return left;
+        
+        k--;
+        if(k == 0) 
+           return root;
+
+        return Util(root->right, k);
+    }
+    int kthSmallest(TreeNode* root, int k) {
+        TreeNode* ans = Util(root, k);
+        return ans->val;
+    }
+};
+
+Method 3: Morris Traversal 
+TC - O(N) SC - O(1)
+
+class Solution {
+public:
+    int kthSmallest(TreeNode* root, int k) {
+        if (!root)
+            return 0;
+        int count=0, ans;
+        while (root!=NULL)
+        {
+            if (root->left == NULL)
+            {
+                count = count + 1;
+                if (count == k)
+                    ans = root->val;
+                root = root->right;
+            }
+            else
+            {
+                TreeNode* pre = root->left;
+                while (pre->right && pre->right != root)
+                    pre = pre->right;
+                if (pre->right == NULL)
+                {
+                    pre->right = root;
+                    root = root->left;
+                }
+                else
+                {
+                    pre->right = NULL;
+                    count = count + 1;
+                    if (count == k)
+                        ans = root->val;
+                    root = root->right;
+                }
+            }
+        }
+        return ans;
+    }
+};
