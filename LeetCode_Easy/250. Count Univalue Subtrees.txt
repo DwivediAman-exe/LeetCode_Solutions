@@ -1,0 +1,35 @@
+Given a binary tree, count the number of uni-value subtrees.
+A Uni-value subtree means all nodes of the subtree have the same value.
+
+Input:  root = [5,1,5,5,5,null,5]
+Output: 4
+
+Method 1: DFS
+TC - O(N) SC - (N)
+
+class Solution {
+public:
+	bool Util(TreeNode* root, int  &count) {
+		if(!root)
+			return true;
+		
+		bool left = Util(root->left, count);
+		bool right = Util(root->right, count);
+
+		if(left == false || right == false)
+			return false;
+		
+		if(root->left && root->data != root->left->data)
+			return false;
+		if(root->right && root->data != root->right->data)
+			return false;
+
+		count++;
+		return true;
+	}
+    int countUnivalSubtrees(TreeNode* root) {
+		int count = 0;
+		Util(root, count);
+		return count;
+	}
+};
