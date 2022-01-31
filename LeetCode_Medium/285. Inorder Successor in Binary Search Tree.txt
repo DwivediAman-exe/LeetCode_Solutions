@@ -1,0 +1,51 @@
+Given a binary search tree and a node in it, find the in-order successor of that node in the BST.
+Note: If the given node has no in-order successor in the tree, return null.
+
+Input: root = [2,1,3], p = 1
+Output: 2
+
+Method 1: Inorder Traversal
+TC - O(N) SC - O(N) (array space)
+
+class Solution {
+public:
+	void Util(TreeNode* root, vector<TreeNode*>& v){
+        if(!root)
+            return ;
+        Util(root->left, v);
+        v.push_back(root);
+        Util(root->right, v);
+    }
+    TreeNode* inorderSuccessor(TreeNode* root, TreeNode* x) {
+        vector<TreeNode*>v;
+        Util(root, v);
+        
+        for(int i=0;i<v.size();i++)
+            if(v[i]==x && i<v.size()-1)
+                return v[i+1];
+            
+        return NULL;
+    }
+};
+
+
+Method 2: BST property
+TC - O(height) SC - O(1)  
+
+class Solution {
+public:
+    TreeNode* inorderSuccessor(TreeNode* root, TreeNode* x) {
+        TreeNode* succ = NULL;
+		while(root)
+		{
+			if(root->val <= x->val) {
+				root = root->right;
+			}
+			else {
+				succ = root;
+				root = root->left;
+			}
+		}
+		return succ;
+    }
+};
