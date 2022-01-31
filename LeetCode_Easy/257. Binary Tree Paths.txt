@@ -1,0 +1,35 @@
+Given the root of a binary tree, return all root-to-leaf paths in any order.
+A leaf is a node with no children.
+
+Input: root = [1,2,3,null,5]
+Output: ["1->2->5","1->3"]
+
+Method 1: DFS
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    void Util(TreeNode* root, string curr, vector<string> &ans) {
+        if(!root)
+            return;
+        
+        if(curr.size() == 0)
+            curr += to_string(root->val);
+        else
+            curr += "->" + to_string(root->val);
+        if(!root->left && !root->right) {
+            ans.push_back(curr);
+        }
+        
+        Util(root->left, curr, ans);
+        Util(root->right, curr, ans);
+    }
+    vector<string> binaryTreePaths(TreeNode* root) {
+        if(!root)
+            return {};
+        vector<string>ans;
+        string curr;
+        Util(root, curr, ans);
+        return ans;
+    }
+};

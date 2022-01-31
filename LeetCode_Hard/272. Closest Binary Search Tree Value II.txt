@@ -1,0 +1,91 @@
+Given a non-empty binary search tree and a target value, find k values in the BST that are closest to the target.
+
+Note: Given target value is a floating point.
+You may assume k is always valid, that is: k ≤ total nodes.
+You are guaranteed to have only one unique set of k values in the BST that are closest to the target.
+Follow up: Assume that the BST is balanced, could you solve it in less than O(n) runtime (where n = total nodes)?
+
+Input: root = [4,2,5,1,3], target = 3.714286, and k = 2
+Output: [4,3]
+
+Method 1:
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+	void inorder(TreeNode *root, vector<int> &v) {
+        if(!root)
+			return;
+        inorder(root->left, v);
+        v.push_back(root->val);
+        inorder(root->right, v);
+    }
+    vector<int> closestKValues(TreeNode* root, double target, int k) {
+		vector<int>v, ans;
+		inorder(root, v);
+		int idx = 0;
+		double diff = numeric_limits<double>::max();
+		for(int i=0;i<v.size();i++)
+		{
+			if(diff >= abs(target - v[i])) {
+				diff = abs(target - v[i])
+				idx = i;
+			}
+		}
+
+		int left = idx-1, right = idx+1;
+		for(int i=0;i<k;i++)
+		{
+			res.push_back(v[idx]);
+			if(left > 0 && right < v.size())
+			{
+				if( abs(v[left] - target) > abs(v[right] - target)) {
+					idx = right;
+					right++;
+				}
+				else {
+					idx = left;
+					left--;
+				}
+			}
+			else if(left >= 0) {
+				idx = left;
+				left--;
+			}
+			else if(right < v.size()) {
+				idx = right;
+				right++;
+			}
+		}
+		reeturn res;
+	}
+};
+
+Method 2: Heap
+TC - O(N) SC - O(K + LogN)
+
+class Solution {
+public:
+    void DFS(TreeNode* root, double target, int k, priority_queue<pair<double, int>>& pq) {
+        if(!root) 
+			return;
+			
+        pq.push({abs(root->val - target), root->val});
+        if(pq.size() > k) 
+			pq.pop();
+
+        DFS(root->left, target, k, pq);
+        DFS(root->right, target, k, pq);
+    }
+    vector<int> closestKValues(TreeNode* root, double target, int k) {
+        vector<int>res;
+        priority_queue<pair<double, int>>pq;
+        DFS(root, target, k, pq);
+
+        while(!pq.empty()) {
+			res.push_back(pq.top().second);
+			pq.pop();
+		}
+        return res;
+    }
+};
