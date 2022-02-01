@@ -1,0 +1,199 @@
+You are given an array of k linked-lists lists, each linked-list is sorted in ascending order.
+Merge all the linked-lists into one sorted linked-list and return it.
+
+Input: lists = [[1,4,5],[1,3,4],[2,6]]
+Output: [1,1,2,3,4,4,5,6]
+Explanation: The linked-lists are:
+[ 
+  1->4->5,
+  1->3->4,
+  2->6
+]
+merging them into one sorted list:
+1->1->2->3->4->4->5->6
+
+Method 1: Storing all values in vector and sorting it
+TC - O(N) + O(N*LogN) + O(N) ~ O(N*LogN) SC - O(N)         N - Total number of nodes
+
+class Solution {
+public:
+    void storeValue(vector<ListNode*>& lists, int k, vector<int>& v) {
+        for(int i=0;i<k;i++)
+        {
+            ListNode* curr = lists[i];
+            while(curr) {
+                v.push_back(curr->val);
+                curr = curr->next;
+            }
+        }
+    }
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        int k = lists.size();
+        vector<int>v;
+        storeValue(lists, k, v);
+        sort(v.begin(), v.end());
+        
+        int s = v.size();
+        if(s == 0)
+            return NULL;
+        
+        ListNode* result = new ListNode(v[0]);
+        ListNode* curr = result;
+        for(int i=1;i<s;i++)
+        {
+            curr->next = new ListNode(v[i]);
+            curr = curr->next;
+        }
+        
+        return result;
+    }
+};
+
+Method 2: Traversing all lists and merging one by one
+TC - O(kN) SC - O(1)         N - Total number of nodes
+
+class Solution {
+public:
+    ListNode* Util(ListNode* l1, ListNode* l2) {
+        ListNode* tempresult = new ListNode(INT_MIN);
+        ListNode* ptr = tempresult;
+        while(l1 || l2)
+        {
+            if(l1 == NULL) {
+                ptr->next = l2;
+                l2 = l2->next;
+            }
+            else if(l2 == NULL) {
+                ptr->next = l1;
+                l1 = l1->next;
+            }
+            else if(l1->val > l2->val) {
+                ptr->next = l2;
+                l2 = l2->next;
+            }
+            else {
+                ptr->next = l1;
+                l1 = l1->next;
+            }
+            ptr = ptr->next;
+        }
+        return tempresult->next;
+    }
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        int k = lists.size();
+        ListNode* result = new ListNode(INT_MIN);
+        
+        for(int i=0;i<k;i++)
+            result = Util(result, lists[i]);
+        
+        return result->next;
+    }
+};
+
+Method 3: Priority Queue
+TC - O(N*logk) SC - O(N)         N - Total number of nodes
+
+struct Triplets {
+    ListNode* node;
+    int apos;
+    Triplets(ListNode* n, int ap) {
+        node = n;
+        apos = ap;
+    }
+};
+
+struct MyCmp {
+    bool operator() (Triplets & t1, Triplets & t2) {
+        return t1.node->val > t2.node->val;
+    }
+};
+
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        int K = lists.size();
+        if(K == 0)
+            return NULL;
+        
+        ListNode* result = new ListNode(INT_MIN);
+        priority_queue<Triplets, vector<Triplets>, MyCmp>q;
+        for(int i=0;i<K;i++) {
+            ListNode* temp = lists[i];
+            if(temp == NULL)	
+				continue;
+            lists[i] = lists[i]->next;
+            Triplets t1(temp, i);
+            q.push(t1);
+        }
+        
+		ListNode* t = result;
+		while(!q.empty()) {
+            Triplets curr = q.top();
+            q.pop();
+            t->next = curr.node;
+            t = t->next;
+
+            int ap = curr.apos;
+            if(lists[ap] != NULL) {
+                ListNode* n = lists[ap];
+                lists[ap] = lists[ap]->next;
+                Triplets t1(n,ap);
+                q.push(t1);
+            }
+        }
+        return result->next;
+    }
+};
+
+Method 4: Merge list with Divide and Conquor
+TC - O(N*logk) SC - O(1)         N - Total number of nodes
+
+class Solution {
+public:
+    ListNode* merge(ListNode* l1, ListNode* l2) {
+        ListNode* temp = new ListNode(INT_MIN);
+        ListNode* ptr = temp;
+        while(l1 || l2) {
+            if(l1 == NULL) {
+                ptr->next = l2;
+                l2 = l2->next;
+            }
+            else if(l2 == NULL) {
+                ptr->next = l1;
+                l1 = l1->next;
+            }
+            else if(l1->val > l2->val) {
+                ptr->next = l2;
+                l2 = l2->next;
+            }
+            else {
+                ptr->next = l1;
+                l1 = l1->next;
+            }
+            ptr = ptr->next;
+        }
+        return temp->next;
+    }
+    ListNode* DivideandConUtil(vector<ListNode*>& lists, int last) {
+        while(last != 0) {
+            int i = 0, j = last;
+            while(j > i) {
+                lists[i] = merge(lists[i], lists[j]);
+                i++;
+                j--;
+                if(i >= j)
+                    last = j;
+            }
+        }
+        return lists[0];
+    }
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        int k = lists.size();
+        if(k == 0)
+            return NULL;
+        
+        ListNode* result = DivideandConUtil(lists, k-1);
+        return result;
+    }
+};
+
