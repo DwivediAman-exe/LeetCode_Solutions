@@ -1,13 +1,11 @@
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
+Given the head of a linked list, remove the nth node from the end of the list and return its head.
+
+Input: head = [1,2,3,4,5], n = 2
+Output: [1,2,3,5]
+
+Method 1: traversing the list
+TC - O(N) SC - O(N)
+
 class Solution {
 public:
     int length(ListNode* head)
@@ -23,38 +21,40 @@ public:
     }
     
     ListNode* removeNthFromEnd(ListNode* head, int n) {
-        int l=length(head);
+        int l = length(head);
         if(l == n) 
-	    return head->next;
-	ListNode* p=head;
-        for(int i=0;i<l-n-1;i++)
-            p=p->next;
+	        return head->next;
+
+	    ListNode* ptr = head;
+        for(int i=0;i<(l-n-1);i++)
+            ptr = ptr->next;
         
-        ListNode* del = p->next;
-        p->next = del->next;
-        delete del;
+        ListNode* del = ptr->next;
+        ptr->next = del->next;
+        delete (del);
         return head;
     }
 };
 
-Method 2:
+Method 2: Using slow and fast pointer
+TC - O(N) SC - O(N)
 
 class Solution {
 public:
     ListNode* removeNthFromEnd(ListNode* head, int n) {
         ListNode* slow = head;
         ListNode* fast = head;
-        while (n--) 
-        { 
+        while (n--)  
             fast = fast->next; 
-        }
-        if (fast == nullptr) 
+        
+        if (fast == NULL) 
             return head->next;
-        while (fast->next != nullptr)
-        {
+
+        while (fast->next != NULL) {
             fast = fast->next;
             slow = slow->next;
         }
+
         ListNode* del = slow->next;
         slow->next = del->next;
         delete del;
