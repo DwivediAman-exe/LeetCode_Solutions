@@ -15,6 +15,7 @@ public:
         ListNode* front = fdummy;
         ListNode* back = bdummy;
         ListNode* curr = head;
+        
         while(curr)
         {
             if(curr->val < x) {
@@ -27,8 +28,13 @@ public:
             }
             curr = curr->next;
         }
+        
         back->next = NULL;
+        ListNode* t1 = bdummy, *t2 = fdummy;
         front->next = bdummy->next;
-        return fdummy->next;
+        delete t1;
+        ListNode* newhead = fdummy->next;
+        delete t2;
+        return newhead;
     }
 };

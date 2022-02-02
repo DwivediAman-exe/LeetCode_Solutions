@@ -1,0 +1,83 @@
+Given the head of a singly linked list and two integers left and right where left <= right, reverse the nodes of the list from position left to position right, and return the reversed list.
+
+Input: head = [1,2,3,4,5], left = 2, right = 4
+Output: [1,4,3,2,5]
+
+Method 1: Iterative
+TC - O(N) SC - O(1)
+
+class Solution {
+public:
+    ListNode* reverse(ListNode* head)
+    {
+        ListNode* prev = NULL;   
+        ListNode* curr = head;
+        while (curr) {
+            ListNode* next = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = next;
+        }
+        return prev;
+    }
+    ListNode* reverseBetween(ListNode* head, int m, int n) {
+        if(m == n)
+            return head;
+        ListNode* rev_start = NULL, *rev_end = NULL;
+        ListNode* rev_prev = NULL, *rev_next = NULL;
+        
+        int i=1;
+        ListNode* curr = head;
+        while(curr && i<=n)
+        {
+            if(i < m) 
+                rev_prev = curr;
+            if(i == m)
+                rev_start = curr;
+            if(i == n) {
+                rev_end = curr;
+                rev_next = curr->next;
+            }
+            curr = curr->next;
+            i++;
+        }
+        
+        rev_end->next = NULL;
+        rev_end = reverse(rev_start);
+        
+        if(rev_prev)
+            rev_prev->next = rev_end;
+        else
+            head = rev_end;
+        
+        rev_start->next = rev_next;
+        return head;
+    }
+};
+
+Method 2: Alternate
+TC - O(N) SC - O(1)
+
+class Solution {
+public:
+    ListNode* reverseBetween(ListNode* head, int l, int r) {
+        ListNode dummy(0);
+        dummy.next = head;
+        ListNode* pre = &dummy;
+        
+        for(int i=0;i<l-1;i++) {
+            pre = pre->next;
+        }
+        
+        ListNode* cur = pre->next;
+        for(int i=0;i<(r-l);i++)
+        {
+            ListNode* temp = pre->next;
+            pre->next = cur->next;
+            cur->next = cur->next->next;
+            pre->next->next = temp;
+        }
+        
+        return dummy.next;
+    }
+};
