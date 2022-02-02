@@ -1,22 +1,62 @@
+Given the head of a sorted linked list, delete all nodes that have duplicate numbers, leaving only distinct numbers from the original list. Return the linked list sorted as well.
+
+Input: head = [1,2,3,3,4,4,5]
+Output: [1,2,5]
+
+Method 1: Using Sentinel Head Iterative
+TC - O(N) SC - O(1)
+
 class Solution {
 public:
     ListNode* deleteDuplicates(ListNode* head) {
-        if(!head || !head->next) 
+        if(!head || !head->next)
             return head;
-        ListNode *dummy = new ListNode(0), *pre = dummy;
-        dummy->next = head;
-        while(pre->next)
+        ListNode* dummy = new ListNode(0, head);
+        ListNode* prev = dummy;
+        while(head)
         {
-            ListNode *cur = pre->next;
-            while(cur->next && cur->next->val == cur->val) 
+            if(head->next && head->val == head->next->val)
             {
-                cur = cur->next;
+                while(head->next && head->val == head->next->val) {
+                    ListNode* temp = head;
+                    head = head->next;
+                    delete temp;
+                }
+            
+                prev->next = head->next;
+                ListNode *temp = head;
+                head = head -> next;
+                delete temp;
             }
-            if(cur != pre->next) 
-                pre->next = cur->next;
-            else 
-                pre = pre->next;
+            else {
+                prev = prev->next;
+                head = head->next;
+            }
         }
         return dummy->next;
+    }
+};
+
+Method 2: Recursive
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+        if(!head || !head->next)
+            return head;
+        
+        if(head->next && head->val == head->next->val)
+        {
+            while(head->next && head->val == head->next->val) {
+                ListNode* temp = head;
+                head = head->next;
+                delete temp;
+            }
+
+            return deleteDuplicates(head->next);
+        } 
+        head->next = deleteDuplicates(head->next);
+        return head;
     }
 };

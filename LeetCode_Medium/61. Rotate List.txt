@@ -1,0 +1,70 @@
+Given the head of a linked list, rotate the list to the right by k places.
+
+Input: head = [1,2,3,4,5], k = 2
+Output: [4,5,1,2,3]
+
+Method 1: Finding Kth node
+TC - O(N) SC - O(1)
+
+class Solution {
+public:
+    int length(ListNode* head) {
+        int count = 0;
+        while(head) {
+            count++;
+            head = head->next;
+        }
+        return count;
+    }
+    ListNode *rotateRight(ListNode *head, int k) {
+        if(!head || !head->next || k==0)
+            return head;
+        
+        ListNode* curr = head;
+        int len = length(head);
+        k = k%len;
+        k = len-k;
+        int count = 1;
+        while(curr && count<k) {
+            curr = curr->next;
+            count++;
+        }
+        
+        ListNode* kthNode = curr;
+        while(curr->next) {
+            curr = curr->next;
+        }
+        
+        curr->next = head;
+        head = kthNode->next;
+        kthNode->next = NULL;
+        return head;
+    }
+};
+
+Method 2: Circular list concept
+TC - O(N) SC - O(1)
+
+class Solution {
+public:
+    ListNode *rotateRight(ListNode *head, int k) {
+        if(head==NULL || head->next==NULL || k==0)
+            return head;
+        
+		int len = 1;
+        ListNode *tail = head;
+        while (tail->next != NULL) {
+            tail = tail->next;
+            len++;
+        }
+        tail->next = head;
+
+        k = k%len;
+        for (int i=0;i<len-k;i++) 
+            tail = tail->next;
+        
+        head = tail->next;
+        tail->next = NULL;
+        return head;
+    }
+};
