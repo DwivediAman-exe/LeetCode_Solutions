@@ -1,0 +1,93 @@
+A critical point in a linked list is defined as either a local maxima or a local minima.
+A node is a local maxima if the current node has a value strictly greater than the previous node and the next node.
+A node is a local minima if the current node has a value strictly smaller than the previous node and the next node.
+
+Note that a node can only be a local maxima/minima if there exists both a previous node and a next node.
+Given a linked list head, return an array of length 2 containing [minDistance, maxDistance] where minDistance is the minimum distance between any two distinct critical points and maxDistance is the maximum distance between any two distinct critical points. If there are fewer than two critical points, return [-1, -1].
+
+Input: head = [5,3,1,2,5,1,2]
+Output: [1,3]
+
+Method 1: Using vector to store position of CP
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    vector<int> nodesBetweenCriticalPoints(ListNode* head) {
+        if(!head or !head->next or !head->next->next) return {-1,-1};
+        
+        ListNode* a = head;     
+        ListNode* b = head->next;
+        ListNode* c = head->next->next;
+        
+        vector<int>critical;
+        int pos = 1;
+        
+        while(c != NULL){
+            if(a->val > b->val and c->val > b->val) critical.push_back(pos);       
+            else if(a->val < b->val and c->val < b->val) critical.push_back(pos);   
+            
+            a = a->next;
+            b = b->next;
+            c = c->next;
+            pos += 1;
+        }
+        
+        if(critical.size() < 2) return {-1, -1};
+        
+        int minDiff = INT_MAX;
+        int n = critical.size();
+        for(int i=1; i<n; i++)    minDiff = min(minDiff, critical[i] - critical[i-1]);
+        int maxDiff = critical[n-1] - critical[0];
+        
+        return{minDiff, maxDiff};
+    }
+};
+
+Method 2: Space optimized  
+TC - O(N) SC - O(1)
+
+
+class Solution {
+public:
+    vector<int> nodesBetweenCriticalPoints(ListNode* head) 
+    {
+        vector<int> result(2,-1);
+        if(head==NULL || head->next==NULL || head->next->next==NULL)
+            return result;
+        
+        result[0]=INT_MAX;
+        int max_start_index=-1, min_start_index=-1;
+        ListNode* curr=head->next;
+        
+        for(int i=2, pre_val=head->val;curr->next!=NULL; i++, curr=curr->next)
+        {
+            if(pre_val<curr->val && curr->val>curr->next->val) {
+                if(max_start_index==-1) {
+                    max_start_index=i;
+                    min_start_index=i;
+                }
+                else {
+                    result[1]=i-max_start_index;
+                    result[0]=min(result[0], i-min_start_index);
+                    min_start_index=i;
+                }
+            }
+            else if(pre_val>curr->val && curr->val<curr->next->val) {
+                if(max_start_index==-1) {
+                    max_start_index=i;
+                    min_start_index=i;
+                }
+                else {
+                    result[1]=i-max_start_index;
+                    result[0]=min(result[0], i-min_start_index);
+                    min_start_index=i;
+                }
+            }
+            pre_val=curr->val;
+        }
+        if(result[0]==INT_MAX)
+            result[0]=-1;
+        return result;
+    }
+};
