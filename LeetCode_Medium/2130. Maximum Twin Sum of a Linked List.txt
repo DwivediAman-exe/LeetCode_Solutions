@@ -1,0 +1,70 @@
+In a linked list of size n, where n is even, the ith node (0-indexed) of the linked list is known as the twin of the (n-1-i)th node, if 0 <= i <= (n / 2) - 1.
+
+For example, if n = 4, then node 0 is the twin of node 3, and node 1 is the twin of node 2. These are the only nodes with twins for n = 4.
+The twin sum is defined as the sum of a node and its twin.
+Given the head of a linked list with even length, return the maximum twin sum of the linked list.
+
+Input: head = [5,4,2,1]
+Output: 6
+Explanation:
+Nodes 0 and 1 are the twins of nodes 3 and 2, respectively. All have twin sum = 6.
+There are no other nodes with twins in the linked list.
+Thus, the maximum twin sum of the linked list is 6.
+
+Method 1: Using an array
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    int pairSum(ListNode* head) {
+        vector<int>v;
+        while(head) {
+            v.push_back(head->val);
+            head = head->next;
+        }
+        
+        int n = v.size();
+        int res = 0;
+        for(int i=0;i<n/2;i++) 
+            res = max(res, v[i]+v[n-i-1]);
+
+        return res;
+    }
+};
+
+Method 2: Slow and Fast pointers and splitting the list
+TC - O(N) SC - O(1)
+
+class Solution {
+public:
+    ListNode* reverse(ListNode* head1) {
+        ListNode* curr = head1, *prev = NULL;
+        while(curr) {
+            ListNode* nxt = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = nxt;
+        }
+        return prev;
+    }
+    int pairSum(ListNode* head) {
+        ListNode* slow = head, *fast = head, *prev = NULL;
+        while(fast && fast->next) {
+            prev = slow;
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        ListNode* head1 = prev->next;
+        prev->next = NULL;
+        
+        head1 = reverse(head1);
+        int res = 0;
+        while(head && head1) {
+            res = max(res, head->val + head1->val);
+            head = head->next;
+            head1 = head1->next;
+        }
+
+        return res;
+    }
+};
