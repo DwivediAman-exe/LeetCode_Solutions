@@ -1,0 +1,55 @@
+Design a simplified version of Twitter where users can post tweets, follow/unfollow another user, and is able to see the 10 most recent tweets in the user's news feed.
+
+Implement the Twitter class:
+Twitter() Initializes your twitter object.
+void postTweet(int userId, int tweetId) Composes a new tweet with ID tweetId by the user userId. Each call to this function will be made with a unique tweetId.
+List<Integer> getNewsFeed(int userId) Retrieves the 10 most recent tweet IDs in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user themself. Tweets must be ordered from most recent to least recent.
+void follow(int followerId, int followeeId) The user with ID followerId started following the user with ID followeeId.
+void unfollow(int followerId, int followeeId) The user with ID followerId started unfollowing the user with ID followeeId.
+ 
+Input
+["Twitter", "postTweet", "getNewsFeed", "follow", "postTweet", "getNewsFeed", "unfollow", "getNewsFeed"]
+[[], [1, 5], [1], [1, 2], [2, 6], [1], [1, 2], [1]]
+Output
+[null, null, [5], null, null, [6, 5], null, [5]]
+
+Method 1: 
+
+class Twitter {
+public:
+	map<int, set<int>> friends;
+	int curr = 0;
+	priority_queue<vector<int>>timeline;
+    Twitter() {
+        friends.clear();
+		curr = 0;
+		timeline = priority_queue<vector<int>>();
+    }
+    
+    void postTweet(int userId, int tweetId) {
+        timeline.push({curr++, tweetId, userId});
+    }
+    
+    vector<int> getNewsFeed(int userId) {
+        vector<int>ans;
+		priority_queue<vector<int>> userTimeline = timeline;
+		int n = 0;
+		while(!userTimeline.empty() && n<10) {
+			auto topTweet = userTimeline.top();
+			userTimeline.pop();
+			if(topTweet[2] == userId || friends[userId].count(topTweet[2])) {
+				ans.push_back(topTweet[1]);
+				n++;
+			}
+		}
+		return ans;
+    }
+    
+    void follow(int followerId, int followeeId) {
+        friends[followerId].insert(followeeId);
+    }
+    
+    void unfollow(int followerId, int followeeId) {
+        friends[followerId].erase(followeeId);
+    }
+};

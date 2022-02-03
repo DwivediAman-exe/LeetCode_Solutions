@@ -1,0 +1,77 @@
+Given a non-negative integer represented as non-empty a singly linked list of digits, plus one to the integer.
+You may assume the integer do not contain any leading zero, except the number 0 itself.
+The digits are stored such that the most significant digit is at the head of the list.
+
+Input: [1,2,3]
+Output: [1,2,4]
+
+Method 1: Direct addition
+TC - O(N) SC - O(N) (function call stack)
+
+class Solution
+{
+    public:
+	ListNode* reverse(ListNode* head) {
+		ListNode* prev = NULL, *curr = head;
+		while(curr) {
+			ListNode* nxt = curr->next;
+			curr->next = prev;
+			prev = curr;
+			curr = nxt;
+		}
+		return  prev;
+	}
+    ListNode* plusOne(ListNode *head) 
+    {
+        if(!head)
+			return head;
+		
+		ListNode* rev_head = reverse(head);
+		ListNode* curr = rev_head;
+		ListNode* prev = curr;
+		int carry = 1;
+		while(curr) {
+			prev = curr;
+			int sum = curr->val + carry;
+			curr->val = sum%10;
+			carry = sum/10;
+			if(carry == 0)
+				break;
+			curr = curr->next; 
+		}
+		if(carry)
+			prev->next = new ListNode(1);
+		head = reverse(rev_head);
+		return head;
+    }
+};
+
+Method 2: Alternative Solution
+TC - O(N) SC - O(1) 
+
+class Solution
+{
+public:
+	ListNode* plusOne(ListNode* head) {
+		ListNode* curr = head, *right = NULL;
+		while(curr) {
+			if(curr->val != 9)
+				right = curr;
+			curr = curr->next;
+		}
+
+		if(!right) {
+			right = new ListNode(1);
+			right->next = head;
+			head = right;
+		}
+		else
+			right->val += 1;
+		curr = right->next;
+		while(curr) {
+			curr->val = 0;
+			curr = curr->next;
+		}
+		return head;
+	}
+};
