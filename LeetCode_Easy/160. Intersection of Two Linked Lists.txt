@@ -1,0 +1,108 @@
+Given the heads of two singly linked-lists headA and headB, return the node at which the two lists intersect. If the two linked lists have no intersection at all, return null.
+For example, the following two linked lists begin to intersect at node c1:
+The test cases are generated such that there are no cycles anywhere in the entire linked structure.
+Note that the linked lists must retain their original structure after the function returns.
+
+Input: intersectVal = 8, listA = [4,1,8,4,5], listB = [5,6,1,8,4,5], skipA = 2, skipB = 3
+Output: Intersected at '8'
+Explanation: The intersected node's value is 8 (note that this must not be 0 if the two lists intersect).
+From the head of A, it reads as [4,1,8,4,5]. From the head of B, it reads as [5,6,1,8,4,5]. There are 2 nodes before the intersected node in A; There are 3 nodes before the intersected node in B.
+
+Method 1: Using Nested loops
+TC - O(N*M) SC - O(1)
+
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *l1, ListNode *l2) {
+        while(l1)
+        {
+            ListNode* curr1 = l1;
+            ListNode* curr2 = l2;
+            while(curr2) {
+                if(curr1 == curr2)
+                    return curr1;
+                curr2 = curr2->next;
+            }
+            l1 = l1->next;
+        }
+        return NULL;
+    }
+};
+
+Method 2: Using size of list
+TC - O(max(N,M)) SC - O(1)
+
+class Solution {
+public:
+    int getListSize(ListNode *head) {
+        int size = 0;
+        while (head) {
+            head = head->next;
+            size++;
+        }
+        return size;
+    }
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        int s1 = getListSize(headA);
+        int s2 = getListSize(headB);
+        if(s1 == 0 || s2 == 0) 
+            return NULL;
+
+        if(s1>s2)
+            for(int i=0;i<s1-s2;i++) 
+                headA = headA->next;
+        
+        if(s1<s2) 
+            for(int i=0;i<s2-s1;i++) 
+                headB = headB->next;
+        
+        while(headA && headB) {
+            if(headA == headB) 
+                return headA;
+            headA = headA->next;    
+            headB = headB->next;    
+        }
+        return NULL;
+    }
+};
+
+Method 3: Hashing
+TC - O(max(N,M)) SC - O(N)
+
+class Solution {
+public:
+	ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+		unordered_map<ListNode*, int> m;
+		while(headA != NULL)
+        {
+			m[headA]++;
+			headA = headA->next;
+		}
+        
+		while(headB != NULL) 
+        {
+			if(m[headB] > 0) 
+				return headB;
+			headB = headB->next;
+		}
+		return NULL;
+	}
+};
+
+Method 4: Using Two Pointers
+TC - O(max(N,M)) SC - O(1)
+
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        ListNode *ptrA = headA, *ptrB = headB;
+        if(ptrA == NULL || ptrB == NULL)
+            return NULL;
+        while (ptrA != ptrB) 
+        { 
+            ptrA = ptrA ? ptrA->next : headB;
+            ptrB = ptrB ? ptrB->next : headA;
+        }
+        return ptrA;
+    }
+};
