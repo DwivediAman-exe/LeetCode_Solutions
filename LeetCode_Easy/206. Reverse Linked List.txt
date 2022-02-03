@@ -1,0 +1,75 @@
+Given the head of a singly linked list, reverse the list, and return the reversed list.
+
+Input: head = [1,2,3,4,5]
+Output: [5,4,3,2,1]
+
+Method 1: Using Stack
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        if(!head)
+            return head;
+        stack<ListNode*>s;
+        
+        ListNode* curr = head;
+        while(curr) {
+            s.push(curr);
+            curr = curr->next;
+        }
+        
+        head = NULL;
+        while(!s.empty()) {
+            if(!head) {
+                head = s.top();
+                curr = head;
+            }
+            else {
+                curr->next = s.top();
+                curr = curr->next;
+            }
+            s.pop();
+        }
+        
+        curr->next = NULL;
+        return head;
+    }
+};
+
+Method 2: Efficient Solution
+TC - O(N) SC - O(1)
+
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        ListNode* prev = NULL;
+        ListNode* curr = head;
+        while(curr)
+        {
+            ListNode* next = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = next;
+        }
+        return prev;
+    }
+};
+
+Method 3: Recursive
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        if(!head || !head->next)
+            return head;
+        
+        ListNode* rest_head = reverseList(head->next);
+        ListNode* rest_tail = head->next;
+        
+        rest_tail->next = head;
+        head->next = NULL;
+        return rest_head;
+    }
+};
