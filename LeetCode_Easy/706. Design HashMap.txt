@@ -1,0 +1,79 @@
+Design a HashMap without using any built-in hash table libraries.
+Implement the MyHashMap class:
+MyHashMap() initializes the object with an empty map.
+void put(int key, int value) inserts a (key, value) pair into the HashMap. If the key already exists in the map, update the corresponding value.
+int get(int key) returns the value to which the specified key is mapped, or -1 if this map contains no mapping for the key.
+void remove(key) removes the key and its corresponding value if the map contains the mapping for the key.
+ 
+Input
+["MyHashMap", "put", "put", "get", "get", "put", "get", "remove", "get"]
+[[], [1, 1], [2, 2], [1], [3], [2, 1], [2], [2], [2]]
+Output
+[null, null, null, 1, -1, null, 1, null, -1]
+
+Method 1: Naive solution
+TC - O(N) SC - O(N)
+
+class MyHashMap {
+private:
+    vector<int>map;
+public:
+    MyHashMap() {
+        for(int i=0;i<pow(10,6)+1;i++)
+            this->map.push_back(-1);
+    }
+    
+    void put(int key, int value) {
+        this->map[key] = value;
+    }
+    
+    int get(int key) {
+        return this->map[key];
+    }
+    
+    void remove(int key) {
+        this->map[key] = -1;
+    }
+};
+
+
+Method 2: Optimized solution
+TC - O(1) SC - O(N)
+
+class MyHashMap {
+private:
+    const int my_size = 769;
+    vector<list<pair<int,int>>>hash;
+public:
+    MyHashMap() {
+        hash.resize(my_size);
+    }
+    void put(int key, int value) {
+        auto& Mylist = hash[key%my_size];
+        for(auto& Mypair : Mylist) {
+            if(Mypair.first == key) {
+                Mypair.second = value;
+                return;
+            }
+        }
+        Mylist.push_back({key,value});
+    }
+    int get(int key) {
+        auto& Mylist = hash[key%my_size];
+        for(auto& Mypair : Mylist){
+            if(Mypair.first == key){
+                return Mypair.second;
+            }
+        }
+        return -1;
+    }
+    void remove(int key) {
+        auto& Mylist = hash[key%my_size];
+        for(auto& Mypair : Mylist){
+            if(Mypair.first == key){
+                Mylist.remove(Mypair);
+                return;
+            }
+        }
+    }
+};

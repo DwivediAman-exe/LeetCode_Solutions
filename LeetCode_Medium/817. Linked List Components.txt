@@ -1,0 +1,30 @@
+You are given the head of a linked list containing unique integer values and an integer array nums that is a subset of the linked list values.
+Return the number of connected components in nums where two values are connected if they appear consecutively in the linked list.
+
+Input: head = [0,1,2,3], nums = [0,1,3]
+Output: 2
+Explanation: 0 and 1 are connected, so [0, 1] and [3] are the two connected components.
+
+Method 1:
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    int numComponents(ListNode* head, vector<int>& nums) {
+        int ans=0;
+        unordered_set<int>s;
+        for(auto &i : nums)
+            s.insert(i);
+
+        while(head) {
+            if(s.find(head->val) != s.end()) {
+                ans++;
+                while(head && s.find(head->val) != s.end())
+                    head = head->next;
+            }
+            else
+                head = head->next;
+        }
+        return ans;
+    }
+};
