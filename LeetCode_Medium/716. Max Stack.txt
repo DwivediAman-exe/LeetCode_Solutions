@@ -1,0 +1,89 @@
+Design a max stack that supports push, pop, top, peekMax and popMax.
+
+push(x) -- Push element x onto stack.
+pop() -- Remove the element on top of the stack and return it.
+top() -- Get the element on the top.
+peekMax() -- Retrieve the maximum element in the stack.
+popMax() -- Retrieve the maximum element in the stack, and remove it. If you find more than one maximum elements, only remove the top-most one.
+
+Method 1: Naive way to traverse the stack every time to find max element;
+TC - O(N) SC - O(1)
+
+Method 2: Using auxillary stack
+TC - O(1) from first 4 functions SC - O(N)
+
+class MaxStack {
+private:
+	stack<int>s;
+	stack<int>auxillary;
+public:
+	MaxStack() {
+	}
+	void push(int x) {
+		s.push(x);
+		if(auxillary.empty() || auxillary.top() <= x)
+			auxillary.push(x);
+	}
+	int pop() {
+		int x = s.top(); s.pop();
+		if(!auxillary.empty() && auxillary.top()==x)
+			auxillary.pop();
+	}
+	int top() {
+		return s.top();
+	}
+	int peekMax(){
+		return auxillary.top();
+	}
+	int popMax() {
+		int x = auxillary.top(); auxillary.pop();
+		stack<int>temp;
+		while(s.top() != x) {
+			temp.push(s.top());
+			s.pop();
+		}
+		s.pop();
+		while(!temp.empty()) {
+			s.push(temp.top());
+			temp.pop();
+		}
+		return x;
+	}
+};
+
+Method 3: Using complex DS
+TC - O(LogN) SC - O(N)
+
+class MaxStack {
+private:
+    list<int> v;
+    map<int, vector<list<int>::iterator>> m;
+public:
+    MaxStack() {}
+    void push(int x) {
+        v.insert(v.begin(), x);
+        m[x].push_back(v.begin());
+    }
+    int pop() {
+        int x = *v.begin();
+        m[x].pop_back();
+        if (m[x].empty()) m.erase(x);
+        v.erase(v.begin());
+        return x;
+    }
+    int top() {
+        return *v.begin();
+    }
+    int peekMax() {
+        return m.rbegin()->first;
+    }
+    int popMax() {
+        int x = m.rbegin()->first;
+        auto it = m[x].back();
+        m[x].pop_back();
+        if (m[x].empty()) m.erase(x);
+        v.erase(it);
+        return x;
+    }
+};
+

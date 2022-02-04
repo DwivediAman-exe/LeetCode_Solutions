@@ -1,0 +1,83 @@
+You are given the head of a linked list, and an integer k.
+Return the head of the linked list after swapping the values of the kth node from the beginning and the kth node from the end (the list is 1-indexed).
+
+Input: head = [1,2,3,4,5], k = 2
+Output: [1,4,3,2,5]
+
+Method 1: Using vector
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    ListNode* swapNodes(ListNode* head, int k) {
+        vector<ListNode*> arr;
+        ListNode* curr = head;
+        while(curr) {
+            arr.push_back(curr);
+            curr = curr->next;
+        }
+
+        int temp = arr[k-1]->val;
+        arr[k-1]->val = arr[arr.size()-k]->val;
+        arr[arr.size()-k]->val = temp;
+        return head;
+    }
+};
+
+Method 2: Swapping pointers
+TC - O(N) SC - O(1) (single pass)
+
+class Solution {
+public:
+    ListNode* swapNodes(ListNode* head, int k) {
+        head = new ListNode(-1, head);
+		ListNode *prev1 = head, *prev2 = head, *curr = head;
+		while(--k) {
+			prev1 = prev1->next;
+			curr = curr->next;
+		}
+		curr = curr->next;
+
+		while(curr->next) {
+			prev2 = prev2->next;
+			curr = curr->next;
+		}
+
+		if(prev1->next == prev2) {
+			curr = prev2->next;
+			prev1->next->next = prev2->next->next;
+			curr->next = prev1->next;
+			prev1->next = curr;
+			return head->next;
+		}
+
+		curr = prev1->next;
+		prev1->next = prev2->next;
+		prev1 = prev2->next->next;
+		prev2->next->next = curr->next;
+		prev2->next = curr;
+		curr->next = prev1;
+		return head->next;
+    }
+};
+
+Method 3: Short method swapping pointers
+TC - O(N) SC - O(1) (single pass)
+
+class Solution {
+public:
+    ListNode* swapNodes(ListNode* head, int k) {
+        ListNode **a = &head;
+        while (--k) {
+            a = &(*a)->next;
+        }
+        ListNode **b = &head, **x = &(*a)->next;
+        while (*x) {
+            x = &(*x)->next; 
+            b = &(*b)->next; 
+        }
+        swap(*a, *b);
+        swap((*a)->next, (*b)->next);
+        return head;
+    }
+};
