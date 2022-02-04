@@ -1,0 +1,74 @@
+You are given the head of a linked list with n nodes.
+For each node in the list, find the value of the next greater node. That is, for each node, find the value of the first node that is next to it and has a strictly larger value than it.
+Return an integer array answer where answer[i] is the value of the next greater node of the ith node (1-indexed). If the ith node does not have a next greater node, set answer[i] = 0.
+
+Input: head = [2,1,5]
+Output: [5,5,0]
+
+Method 1: Using vector
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+	vector<int> Util(vector<int>& nums) {
+		int n = nums.size();
+        vector<int>ans(n);
+		stack<int>s;
+        for(int i=n-1;i>=0;i--) {
+            while(!s.empty() && s.top()<=nums[i])
+                s.pop();
+            if(s.size() == 0)
+                ans[i] = 0;
+            else
+                ans[i] = s.top();
+            s.push(nums[i]);
+        }
+        return ans;
+	}
+    vector<int> nextLargerNodes(ListNode* head) {
+        vector<int>nums;
+        while(head) {
+            nums.push_back(head->val);
+            head = head->next;
+        }
+		return Util(nums);
+    }
+};
+
+Method 1: Revrsing the list Iteratively
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        ListNode* curr = head, *prev = NULL, *next = NULL;
+        while(curr) {
+            next = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = next;
+        }   
+        return prev;
+    }
+    vector<int> nextLargerNodes(ListNode* head) {
+        vector<int>answer;
+        head = reverseList(head);
+        stack<int>s;
+        
+        while(head) {
+            while(!s.empty() && head->val >= s.top()) 
+                s.pop();
+            
+            if(s.empty())
+                answer.push_back(0);
+            else
+                answer.push_back(s.top());
+            
+            s.push(head->val);
+            head = head->next;
+        }
+
+        reverse(answer.begin(), answer.end());
+        return answer;
+    }
+};

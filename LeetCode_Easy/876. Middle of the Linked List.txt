@@ -1,0 +1,39 @@
+Given the head of a singly linked list, return the middle node of the linked list.
+If there are two middle nodes, return the second middle node.
+
+Input: head = [1,2,3,4,5]
+Output: [3,4,5]
+Explanation: The middle node of the list is node 3.
+
+Method 1: Using vector
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    ListNode* middleNode(ListNode* head) {
+        ListNode* curr = head;
+        vector<ListNode*>v;
+        while(curr) {
+            v.push_back(curr);
+            curr = curr->next;
+        }
+        return v[v.size()/2];
+    }
+};
+
+Method 2: Fast and Slow pointers
+TC - O(N) SC - O(1)
+
+class Solution {
+public:
+    ListNode* middleNode(ListNode* head) {
+        ListNode* slow = head;
+        ListNode* fast = head;
+        while(fast && fast->next)
+        {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        return slow;
+    }
+};
