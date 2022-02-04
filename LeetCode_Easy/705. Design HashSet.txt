@@ -1,0 +1,73 @@
+Design a HashSet without using any built-in hash table libraries.
+Implement MyHashSet class:
+void add(key) Inserts the value key into the HashSet.
+bool contains(key) Returns whether the value key exists in the HashSet or not.
+void remove(key) Removes the value key in the HashSet. If key does not exist in the HashSet, do nothing.
+ 
+Input
+["MyHashSet", "add", "add", "contains", "contains", "add", "contains", "remove", "contains"]
+[[], [1], [2], [1], [3], [2], [2], [2], [2]]
+Output
+[null, null, null, true, false, null, true, null, false]
+
+Method 1:
+TC - O(1), amortized O(1)
+SC - O(N)
+
+class MyHashSet {
+private:
+    vector<int>map;
+public:
+    MyHashSet() {
+        for(int i=0;i<pow(10,6)+1;i++)
+            this->map.push_back(-1);
+    }
+    
+    void add(int key) {
+        this->map[key] = key;
+    }
+    
+    void remove(int key) {
+        this->map[key] = -1;
+    }
+    
+    bool contains(int key) {
+        return (this->map[key] == -1)? false : true;
+    }
+};
+
+Method 2:
+TC - O(N) SC - O(N)
+
+struct Bucket {
+    vector<int> bucket = {};
+    void add(int val) {
+        if (!contains(val)) bucket.push_back(val);
+    }
+    bool contains(int val) {
+        return find(begin(bucket), end(bucket), val) != end(bucket);
+    }
+    void remove(int val) {
+        auto pos = find(begin(bucket), end(bucket), val);
+        if (pos != end(bucket)) bucket.erase(pos);
+    }
+};
+
+class MyHashSet {
+public:
+    vector<Bucket> buckets;
+    int hashSize;
+    MyHashSet(int keySpace = 137) {
+        hashSize = keySpace;
+        buckets.resize(keySpace);
+    }
+    void add(int key) {
+        buckets[key % hashSize].add(key);
+    }
+    void remove(int key) {
+        buckets[key % hashSize].remove(key);
+    }
+    bool contains(int key) {
+        return buckets[key % hashSize].contains(key);
+    }
+};
