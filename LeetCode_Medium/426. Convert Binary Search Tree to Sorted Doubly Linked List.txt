@@ -1,0 +1,95 @@
+Convert a BST to a sorted circular doubly-linked list in-place. Think of the left and right pointers as synonymous to the previous and next pointers in a doubly-linked list.
+
+Method 1: Traverse in Inorder fashion Recursive
+TC - O(N) SC - O(N) (function call stack space)
+
+class Solution {
+public:
+	void inorder(Node* root, Node* prev, Node* head) {
+		if(!root)
+			return;
+
+		inorder(root->left, prev, head);
+		if(!head) {
+			head = root;
+			prev = root;
+		}
+		else {
+			prev->right = root;
+			root->left = prev;
+			prev = root;
+		}
+
+		inorder(root->right, prev, head);
+	}
+    Node* treeToDoublyList(Node* root) {
+		if(!root)
+			return NULL;
+		Node* head = NULL, *prev = NULL;
+		inorder(root, prev, head);
+
+		prev->right = head;
+		head->left = prev;
+		return head;
+	}
+};
+
+Method 2: Traverse in Inorder fashion using Stack
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    Node* treeToDoublyList(Node* root) {
+		if(!root)
+			return NULL;
+		
+		Node* head = NULL, *prev = NULL;
+		stack<Node*>s;
+		while(!s.empty() || root) {
+			while(root) {
+				s.push(root);
+				root = root->left;
+			}
+			root = s.top();
+			s.pop();
+
+			if(!head) {
+				head = root;
+			}
+			if(prev) {
+				pre->right = root;
+                root->left = pre;
+            }
+            pre = root;
+            root = root->right;
+		}
+		head->left = pre;
+        pre->right = head;
+        return head;
+	}
+};
+
+Method 2: Divide and Conquor
+TC - O(NLogN) SC - O(N)
+
+class Solution {
+public:
+    Node* treeToDoublyList(Node* root) {
+        if (!root) return NULL;
+        Node *leftHead = treeToDoublyList(root->left);
+        Node *rightHead = treeToDoublyList(root->right);
+        root->left = root;
+        root->right = root;
+        return connect(connect(leftHead, root), rightHead);
+    }
+    Node* connect(Node* node1, Node* node2) {
+        if (!node1) return node2;
+        if (!node2) return node1;
+        Node *tail1 = node1->left, *tail2 = node2->left;
+        tail1->right = node2;
+        node2->left = tail1;
+        tail2->right = node1;
+        node1->left = tail2;
+        return node1;
+    }
+};
