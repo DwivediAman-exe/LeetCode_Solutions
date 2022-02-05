@@ -1,0 +1,31 @@
+Write code to remove duplicates from an unsorted linked list.
+Follow up:
+How would you solve this problem if a temporary buffer is not allowed?
+
+Method 1: Using nested loops
+TC - O(N*N) SC - O(1)
+
+Method 2: Hashing
+TC - O(N) SC - O(N)
+
+class Solution {
+public:
+    ListNode *deleteDuplicates(ListNode *head) {
+        unordered_set<int> seen; 
+        Node *curr = head; 
+        Node *prev = NULL; 
+        while(curr) 
+        { 
+            if(seen.find(curr->data) != seen.end()) { 
+               prev->next = curr->next;
+               delete (curr);             
+            }
+            else { 
+               seen.insert(curr->data);
+               prev = curr; 
+            }
+            curr = prev->next; 
+        } 
+        return head;
+    }
+};

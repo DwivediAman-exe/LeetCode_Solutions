@@ -1,0 +1,44 @@
+A polynomial linked list is a special type of linked list where every node represents a term in a polynomial expression.
+Each node has three attributes:
+coefficient: an integer representing the number multiplier of the term. The coefficient of the term 9x4 is 9.
+power: an integer representing the exponent. The power of the term 9x4 is 4.
+next: a pointer to the next node in the list, or null if it is the last node of the list.
+
+Input: poly1 = [[1,1]], poly2 = [[1,0]]
+Output: [[1,1],[1,0]]
+Explanation: poly1 = x. poly2 = 1. The sum is x + 1.
+
+Method 1:
+TC - O(M+N) SC - O(1)
+
+class Solution {
+public:
+    PolyNode* addPoly(PolyNode* poly1, PolyNode* poly2) {
+		PolyNode dummy(0,0);
+		PolyNode* curr = &dummy;
+		while (poly1 && poly2)
+		{
+            if(poly1->power > poly2->power) {
+                curr->next = poly1;
+                curr = curr->next;
+                poly1 = poly1->next;
+            } 
+			else if(poly1->power < poly2->power) {
+                curr->next = poly2;
+                curr = curr->next;
+                poly2 = poly2->next;
+            }
+			else {
+                auto coef = poly1->coefficient + poly2->coefficient;
+                if(coef) {
+                    curr->next = new PolyNode(coef, poly1->power);
+                    curr = curr->next;
+                }
+                poly1 = poly1->next;
+                poly2 = poly2->next;
+            }
+        }
+        curr->next = poly1 ? poly1 : poly2;
+        return dummy.next;
+	}
+};

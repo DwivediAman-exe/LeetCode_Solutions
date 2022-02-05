@@ -1,0 +1,35 @@
+Given the head of a singly linked list that is sorted in non-decreasing order using the absolute values of its nodes, return the list sorted in non-decreasing order ising the actual values of its nodes.
+
+Input: head = [0,2,-5,5,10,-10]
+Output: [-10,05,0,2,5,10]
+
+Method 1: Insertion Sort
+TC - O(N*N) SC - (1)
+
+Method 2: Merge Sort
+TC - O(N*LogN) SC - (LogN)
+
+Method 3: Efficient Solution
+TC - O(N) SC - O(1)
+
+class Solution {
+ public:
+  ListNode* sortLinkedList(ListNode* head) {
+    ListNode* prev = head;
+    ListNode* curr = head->next;
+    while (curr)
+	{
+		if (curr->val < 0) {
+			prev->next = curr->next;
+			curr->next = head;
+			head = curr;
+			curr = prev->next;
+		} 
+		else {
+			prev = curr;
+			curr = curr->next;
+		}
+	}
+    return head;
+  }
+};
