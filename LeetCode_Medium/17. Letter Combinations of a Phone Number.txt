@@ -1,25 +1,82 @@
+17. Letter Combinations of a Phone Number
+Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent. Return the answer in any order.
+A mapping of digit to letters (just like on the telephone buttons) is given below. Note that 1 does not map to any letters.
+
+Input: digits = "23"
+Output: ["ad","ae","af","bd","be","bf","cd","ce","cf"]
+
+Method 1: Recursive
+TC - O(4^N*N) SC - O(N)
+
 class Solution {
 public:
-    const vector<string> pad = {
-        "", "", "abc", "def", "ghi", "jkl",
-        "mno", "pqrs", "tuv", "wxyz" };
-    
-    vector<string> letterCombinations(string digits)
+    vector<string>mappings = {"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv",           "wxyz"};
+    void Util(string& digits, int i, string comb, vector<string>& ans)
     {
-        if (digits.empty()) 
+        if(i == digits.size())
+            ans.push_back(comb);
+        
+        else 
+            for(auto x: mappings[digits[i] - '2']) 
+                Util(digits, i+1, comb+x, ans);
+    }
+    vector<string> letterCombinations(string digits) {
+        if(digits == "")
             return {};
-	vector<string> result;
-        result.push_back("");
-        for(auto digit: digits) 
-	{
-            vector<string> tmp;
-            for(auto candidate: pad[digit - '0'])
-	    {
-                for(auto s: result) 
-                    tmp.push_back(s + candidate);
+        vector<string>ans;
+        Util(digits, 0, "", ans);
+        return ans;
+    }
+};
+
+Method 2: Recursive + Backtracking (No compies made during function call)
+TC - O(4^N*N) SC - O(N)
+
+class Solution {
+public:
+    vector<string>mappings = {"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv",           "wxyz"};
+    void Util(string& digits, int i, string& comb, vector<string>& ans)
+    {
+        if(i == digits.size())
+            ans.push_back(comb);
+        
+        else 
+            for(auto x: mappings[digits[i] - '2']) {
+                comb.push_back(x);
+                Util(digits, i+1, comb, ans);
+                comb.pop_back();
             }
-            result.swap(tmp);
-        }
-        return result;
+    }
+    vector<string> letterCombinations(string digits) {
+        if(digits == "")
+            return {};
+        
+        vector<string>ans;
+        string comb = "";
+        Util(digits, 0, comb, ans);
+        return ans;
+    }
+};
+
+Method 3: Iterative
+TC - O(4^N*N) SC - O(N)
+
+class Solution {
+public:
+    vector<string> letterCombinations(string digits) {
+	if(digits == "")
+        return {};
+	vector<string> mappings{"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv",             "wxyz"};
+    vector<string>ans{""};
+        
+	for(auto digit : digits)
+    {
+		vector<string> extendCombination;
+		for(auto& currentCombination : ans)
+			for(auto newChar : mappings[digit - '2'])
+				extendCombination.push_back(currentCombination + newChar);                            
+		ans = move(extendCombination);
+	}
+	return ans;
     }
 };
