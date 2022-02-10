@@ -1,0 +1,81 @@
+Given a collection of candidate numbers (candidates) and a target number (target), find all unique combinations in candidates where the candidate numbers sum to target.
+Each number in candidates may only be used once in the combination.
+Note: The solution set must not contain duplicate combinations.
+
+Input: candidates = [10,1,2,7,6,1,5], target = 8
+Output: 
+[
+[1,1,6],
+[1,2,5],
+[1,7],
+[2,6]
+]
+
+Method 1: Naive Method (TLE)
+TC - O(2^T * K * Log(K)) where T is the target, k is the average length
+SC - O(k*x) x = combinations
+
+class Solution {
+public:
+    void Util(int index, int target, vector<int>& arr, vector<int>& ds,                       set<vector<int>>& ans) {
+        if(index == arr.size()) {
+            if(target == 0)
+                ans.insert(ds);
+            return;
+        }    
+        
+        if(target >= arr[index]) {
+            ds.push_back(arr[index]);
+            Util(index+1, target-arr[index], arr, ds, ans); 
+            ds.pop_back();
+        }
+        
+        Util(index+1, target, arr, ds, ans);
+    }
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        sort(candidates.begin(), candidates.end());
+        set<vector<int>>ans; 
+        vector<int>ds; 
+        Util(0, target, candidates, ds, ans); 
+        vector<vector<int>>res;
+        for(auto x: ans) {
+            vector<int>v;
+            for(auto x1: x) 
+                v.push_back(x1);
+            res.push_back(v);
+        }
+        return res; 
+    }
+};
+
+Method 2: 
+TC - O(2^N*k) no of subseq = 2^N and adding it to ans K
+SC - O(K*x) if we have x combinations then space will be x*k where k is the average length of the combination.
+
+class Solution {
+public:
+    void Util(int index, int target, vector<int>& arr, vector<int>& ds,                 vector<vector<int>>& ans) {
+    	if(target == 0) {
+            ans.push_back(ds);
+            return;
+        }    
+
+        for(int i=index;i<arr.size();i++)
+		{
+			if(i>index && arr[i]==arr[i-1])
+				continue;
+			if(arr[i] > target)
+				break;
+			ds.push_back(arr[i]);
+			Util(i+1, target-arr[i], arr, ds, ans);
+			ds.pop_back(); 
+		}
+    }
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        sort(candidates.begin(), candidates.end());
+        vector<vector<int>>ans; 
+        vector<int>ds; 
+        Util(0, target, candidates, ds, ans); 
+        return ans; 
+    }
+};

@@ -1,19 +1,48 @@
+Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+
+Input: n = 3
+Output: ["((()))","(()())","(())()","()(())","()()()"]
+
+Method 1: Recursion + Backtraking
+TC - O(Nth catlan no) ~ O(4^N/sqrt(N)) SC - O(N)
+
 class Solution {
 public:
-    vector<string> ans;
-    void f(string s,int open,int close)
-    {        
-        if(open==0&&close==0)
-	{                 
+    void Util(string s, int open, int close, vector<string>& ans)
+    {
+        if(open == 0 && close == 0) {
             ans.push_back(s);
             return;
         }
-        if(open>0) f(s+"(",open-1,close);
-        if(open<close) f(s+")",open,close-1);    
+        if(open > 0)
+            Util(s+"(", open-1, close, ans);
+        if(close > open)
+            Util(s+")", open, close-1, ans);
     }
     vector<string> generateParenthesis(int n) {
-        ans.clear();
-        f("",n,n);                             
-        return ans;                             
+        vector<string>ans;
+        Util("", n, n, ans);
+        return ans;
+    }
+};
+
+Method 2: Iterative
+TC - O(Nth catlan no) ~ O(4^N/sqrt(N)) SC - O(N)
+
+class Solution {
+public:
+    vector<string> generateParenthesis(int n) {
+        if (!n) {
+            return {""};
+        }
+        vector<string> parens;
+        for (int i = 0; i < n; i++) {
+            for (string l : generateParenthesis(i)) {
+                for (string r : generateParenthesis(n - 1 - i)) {
+                    parens.push_back('(' + l + ')' + r);
+                }
+            }
+        }
+        return parens;
     }
 };

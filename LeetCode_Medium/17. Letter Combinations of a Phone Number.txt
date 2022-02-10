@@ -37,15 +37,17 @@ public:
     vector<string>mappings = {"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv",           "wxyz"};
     void Util(string& digits, int i, string& comb, vector<string>& ans)
     {
-        if(i == digits.size())
+        if(i == digits.size()) {
             ans.push_back(comb);
+            return;
+        }
         
-        else 
-            for(auto x: mappings[digits[i] - '2']) {
-                comb.push_back(x);
-                Util(digits, i+1, comb, ans);
-                comb.pop_back();
-            }
+    
+        for(auto x: mappings[digits[i] - '2']) {
+            comb.push_back(x);
+            Util(digits, i+1, comb, ans);
+            comb.pop_back();
+        }
     }
     vector<string> letterCombinations(string digits) {
         if(digits == "")
