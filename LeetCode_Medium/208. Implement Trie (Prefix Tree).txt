@@ -1,0 +1,90 @@
+A trie (pronounced as "try") or prefix tree is a tree data structure used to efficiently store and retrieve keys in a dataset of strings. There are various applications of this data structure, such as autocomplete and spellchecker.
+
+Implement the Trie class:
+Trie() Initializes the trie object.
+void insert(String word) Inserts the string word into the trie.
+boolean search(String word) Returns true if the string word is in the trie (i.e., was inserted before), and false otherwise.
+boolean startsWith(String prefix) Returns true if there is a previously inserted string word that has the prefix prefix, and false otherwise.
+
+Input
+["Trie", "insert", "search", "search", "startsWith", "insert", "search"]
+[[], ["apple"], ["apple"], ["app"], ["app"], ["app"], ["app"]]
+Output
+[null, null, true, false, true, null, true]
+Explanation
+Trie trie = new Trie();
+trie.insert("apple");
+trie.search("apple");   // return True
+trie.search("app");     // return False
+trie.startsWith("app"); // return True
+trie.insert("app");
+trie.search("app");     // return True
+
+Method 1: Implementation
+TC - O(|word|) for all functions
+SC - O(T) T = Total no of Tire nodes
+
+struct TrieNode {
+public:
+    TrieNode* child[26];
+    bool isEnd;
+    
+    TrieNode() {
+        for(int i=0;i<26;i++)
+            child[i] = NULL;
+        isEnd = false;
+    }
+};
+
+class Trie {
+public:
+    TrieNode *root;
+    Trie() {
+        root = new TrieNode();
+    }
+    
+    ~Trie() {
+        clear(root);
+    }
+    
+    void clear(TrieNode* root) {
+        for(int i=0;i<26;i++) {
+            if(root->child[i])   
+                clear(root->child[i]);
+        }
+        delete root;
+    }
+    
+    void insert(string word) {
+        TrieNode* curr = root;
+        for(char c: word) {
+            c = c - 'a';
+            if(curr->child[c] == NULL)
+                curr->child[c] = new TrieNode();
+            curr = curr->child[c];
+        }
+        curr->isEnd = true;
+    }
+    
+    bool search(string word) {
+        TrieNode* curr = root;
+        for(char c: word) {
+            c = c - 'a';
+            if(curr->child[c] == NULL)
+                return false;
+            curr = curr->child[c];
+        }
+        return curr->isEnd;
+    }
+    
+    bool startsWith(string prefix) {
+        TrieNode* curr = root;
+        for (char c : prefix) {
+            c = c - 'a';
+            if(curr->child[c] == NULL)
+                return false;
+            curr = curr->child[c];
+        }
+        return true;
+    }
+};

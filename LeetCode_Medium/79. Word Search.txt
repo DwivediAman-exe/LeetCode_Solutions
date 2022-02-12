@@ -1,0 +1,46 @@
+Given an m x n grid of characters board and a string word, return true if word exists in the grid.
+The word can be constructed from letters of sequentially adjacent cells, where adjacent cells are horizontally or vertically neighboring. The same letter cell may not be used more than once.
+
+Input: board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCCED"
+Output: true
+
+Method 1: DFS
+TC - O(N*M*4^L) where N = rows in board, M = columns in board, L = Length of word 
+SC - O(L)
+
+class Solution {
+public:
+    bool isValid(vector<vector<char>>& board, int i, int j, char c) {
+        int m = board.size();
+        int n = board[0].size();
+        if(i<0 || j<0 || i>=m || j>=n || board[i][j]!=c)
+            return false;
+        return true;
+    }
+    bool Util(vector<vector<char>>& board, int i, int j, string word) {
+        if(word.size() == 0)
+            return true;
+        
+        if(!isValid(board, i, j, word[0]))
+            return false;
+        
+        char c = board[i][j];
+        board[i][j] = '*';
+        word = word.substr(1);
+        bool res = Util(board, i+1, j, word) || Util(board, i, j+1, word) ||                        Util(board, i-1, j, word) || Util(board, i, j-1, word);
+        board[i][j] = c;
+        return res;
+    }
+    bool exist(vector<vector<char>>& board, string word) {
+        int m = board.size();
+        int n = board[0].size();
+        
+        for(int i=0;i<m;i++) {
+            for(int j=0;j<n;j++) {
+                if((board[i][j] == word[0]) && Util(board, i, j, word))
+                        return true;
+            }
+        }
+        return false;
+    }
+};
