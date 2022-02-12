@@ -1,0 +1,57 @@
+A transformation sequence from word beginWord to word endWord using a dictionary wordList is a sequence of words beginWord -> s1 -> s2 -> ... -> sk such that:
+Every adjacent pair of words differs by a single letter.
+Every si for 1 <= i <= k is in wordList. Note that beginWord does not need to be in wordList.
+sk == endWord
+Given two words, beginWord and endWord, and a dictionary wordList, return all the shortest transformation sequences from beginWord to endWord, or an empty list if no such sequence exists. Each sequence should be returned as a list of the words [beginWord, s1, s2, ..., sk].
+
+Input: beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log","cog"]
+Output: [["hit","hot","dot","dog","cog"],["hit","hot","lot","log","cog"]]
+Explanation: There are 2 shortest transformation sequences:
+"hit" -> "hot" -> "dot" -> "dog" -> "cog"
+"hit" -> "hot" -> "lot" -> "log" -> "cog"
+
+Method 1: BFS
+TC - O(N*26*W^2+A), where is number of words in wordList, W is length of each words, A is total number of sequences
+SC - O(N*W + A)
+
+class Solution {
+public:
+    vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
+        unordered_set<string> st (wordList.begin(),wordList.end());
+        unordered_set<string> visited;
+        vector<vector<string>> ans;
+        queue<vector<string>> q;
+        q.push({beginWord});
+
+        while(!q.empty())
+        {
+            int size = q.size();
+            while(size--)
+            {
+                auto curr_path = q.front();
+                q.pop();
+                string last = curr_path.back();
+                for(int i=0;i<last.size();++i)
+                {
+                    auto temp = last;
+                    for(char ch='a';ch<='z';++ch)
+                    {
+                        temp[i] = ch;
+                        if(st.find(temp) != st.end()) {
+                            auto new_path = curr_path;
+                            new_path.push_back(temp);
+                            visited.insert(temp);
+                            if(temp == endWord)
+                                ans.push_back(new_path);
+                            else
+                                q.push(new_path);
+                        }
+                    }
+                }
+            }
+            for(auto& str : visited)
+                st.erase(str);
+        }
+        return ans;
+    }
+};
