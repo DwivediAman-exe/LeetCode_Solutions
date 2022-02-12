@@ -1,0 +1,96 @@
+Given a collection of numbers, nums, that might contain duplicates, return all possible unique permutations in any order.
+
+Input: nums = [1,1,2]
+Output:
+[[1,1,2],
+ [1,2,1],
+ [2,1,1]]
+
+Method 1: Recursion + Backtracking
+TC - O(N!*N) SC - O(N)
+
+class Solution {
+public:
+	void Util(vector<int>& nums, int index, set<vector<int>>& ans) {
+		if(index == nums.size()) {
+			ans.insert(nums);
+			return;
+		}
+		
+		for(int i=index;i<nums.size();i++) {
+			swap(nums[i], nums[index]);
+            Util(nums, index+1, ans);
+            swap(nums[i], nums[index]);
+		}
+	}
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        set<vector<int>>ans;
+		vector<int>ds;
+		Util(nums, 0, ans);
+		vector<vector<int>>res;
+        for(auto x: ans) 
+        {
+            vector<int>v;
+            for(auto x1: x)
+                v.push_back(x1);
+            res.push_back(v);
+        }
+        return res;
+    }
+};
+
+Method 2: Alternate 
+TC - O(N!*N) SC - O(N)
+
+class Solution {
+public:
+	void Util(vector<int>& nums, int index, vector<vector<int>>& ans) {
+		if(index == nums.size()) {
+			ans.push_back(nums);
+			return;
+		}
+        
+		unordered_set<int>s;
+		for(int i=index;i<nums.size();i++) {
+			if(s.find(nums[i]) != s.end())
+				continue;
+            s.insert(nums[i]);
+			swap(nums[i], nums[index]);
+            Util(nums, index+1, ans);
+            swap(nums[i], nums[index]);
+		}
+	}
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        vector<vector<int>>ans;
+		vector<int>ds;
+		Util(nums, 0, ans);
+		return ans;
+    }
+};
+
+Method 3: Without extra space
+TC - O(N!*N) SC - O(N)
+
+class Solution {
+public:
+    void Util(vector<int> nums, int index, vector<vector<int>>& ans) {
+        int n = nums.size();
+        if (index == n) {
+            ans.push_back(nums);
+            return;
+        }
+
+        for (int i= index;i<n;++i) {
+            if (i != index && nums[i] == nums[index]) 
+                continue;
+            swap(nums[index], nums[i]);
+            Util(nums, index+1, ans);
+        }
+    }
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+		vector<vector<int>> ans;
+        Util(nums, 0, ans);
+        return ans;
+    }
+};
