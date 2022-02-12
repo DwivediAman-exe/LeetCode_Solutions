@@ -1,0 +1,69 @@
+A valid IP address consists of exactly four integers separated by single dots. Each integer is between 0 and 255 (inclusive) and cannot have leading zeros.
+For example, "0.1.2.201" and "192.168.1.1" are valid IP addresses, but "0.011.255.245", "192.168.1.312" and "192.168@1.1" are invalid IP addresses.
+Given a string s containing only digits, return all possible valid IP addresses that can be formed by inserting dots into s. You are not allowed to reorder or remove any digits in s. You may return the valid IP addresses in any order.
+
+Input: s = "25525511135"
+Output: ["255.255.11.135","255.255.111.35"]
+
+Method 1: Brute force
+TC - O(constant) {input is fixed between 4 to 12} SC - O(1) 
+
+class Solution {
+public:
+    vector<string> restoreIpAddresses(string s) {
+        vector<string> res;
+        for (int a = 1; a < 4; ++a) 
+        for (int b = 1; b < 4; ++b) 
+        for (int c = 1; c < 4; ++c) 
+        for (int d = 1; d < 4; ++d) 
+            if (a + b + c + d == s.size())
+            {
+                int A = stoi(s.substr(0, a));
+                int B = stoi(s.substr(a, b));
+                int C = stoi(s.substr(a + b, c));
+                int D = stoi(s.substr(a + b + c, d));
+                if(A <= 255 && B <= 255 && C <= 255 && D <= 255) {
+                    string t = to_string(A) + "." + to_string(B) + "." + to_string(C) + "." + to_string(D);
+                    if(t.size() == s.size() + 3)
+                        res.push_back(t);
+                }
+            }
+        return res;
+    }
+};
+
+Method 2: Backtracking
+TC - O(constant) {input is fixed between 4 to 12} SC - O(1) 
+
+class Solution {
+public:
+	void Util(string s, int index, vector<string>& temp, vector<string>& ans) {
+		if(index == s.length() && temp.size() == 4) {
+			string validIP = temp[0] + '.' + temp[1] + '.' + temp[2] + '.' + temp[3];
+			ans.push_back(validIP);
+			return;
+		}
+
+		string tempstr = "";
+		for(int i=index;i<s.size() && temp.size()<4;i++) {
+			if(s[i]-'a' > 9)
+				continue;
+            
+			tempstr += s[i];
+			int tempInt = stoi(tempstr);
+			if(0 <= tempInt && tempInt <= 255) {
+				temp.push_back(tempstr);
+				Util(s, i+1, temp, ans);
+				temp.pop_back();
+			}
+			if(tempInt <= 0 || tempInt > 255)
+				break;
+		}
+	}
+    vector<string> restoreIpAddresses(string s) {
+        vector<string>ans;
+		vector<string>temp;
+		Util(s, 0, temp, ans);
+		return ans;
+	}
+};
