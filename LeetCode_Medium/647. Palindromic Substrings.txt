@@ -1,0 +1,64 @@
+Given a string s, return the number of palindromic substrings in it.
+A string is a palindrome when it reads the same backward as forward.
+A substring is a contiguous sequence of characters within the string.
+
+Input: s = "abc"
+Output: 3
+Explanation: Three palindromic strings: "a", "b", "c".
+
+Method 1: Brute force by findind all the substring and checking for palindrome
+TC - O(N^3)  SC - O(1)                    (TLE)
+
+Method 2: Dynammic Programming
+TC - O(N*N) SC - O(N*N)
+
+class Solution {
+public:
+    int countSubstrings(string s) {
+        int n = s.size();
+		bool dp[n][n];
+		memset(dp, false, sizeof(dp));
+
+		int ans = n;
+		for(int i=0;i<n;i++)
+			dp[i][i] = true;
+
+		int start = 0;
+		for(int i=0;i<n-1;i++) {
+			if(s[i] == s[i+1]) {
+				dp[i][i+1] = true;
+				ans++;
+			}
+		}
+
+		for(int k=3;k<=n;k++) {
+			for(int i=0;i<n-k+1;i++) {
+				int j = i + k - 1;
+				if(dp[i+1][j-1] == true && s[i] == s[j]) {
+					dp[i][j] = true;
+					ans++;
+				}
+			}
+		}
+		return ans;
+    }
+};
+
+Method 3: Expand Around Center
+TC - O(N*N) SC - O(1)
+
+class Solution {
+public:
+    int countSubstrings(string s) {
+        int n = size(s), cnt = n; 
+        // For odd length palindromes
+        for(int i = 1, l = 0, r = 2; i < n; i++, l = i - 1, r = i + 1)
+            while(l >= 0 && r < n && s[l] == s[r])
+                l--, r++, cnt++;                    
+        // For even length palindromes
+        for(int i = 1, l = 0, r = 1; i < n; i++, l = i - 1, r = i)
+            while(l >= 0 && r < n && s[l] == s[r]) 
+                l--, r++, cnt++;            
+        return cnt;
+    }
+};

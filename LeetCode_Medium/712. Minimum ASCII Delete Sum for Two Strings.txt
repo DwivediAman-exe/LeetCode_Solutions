@@ -1,0 +1,38 @@
+Given two strings s1 and s2, return the lowest ASCII sum of deleted characters to make two strings equal.
+
+Input: s1 = "sea", s2 = "eat"
+Output: 231
+Explanation: Deleting "s" from "sea" adds the ASCII value of "s" (115) to the sum.
+Deleting "t" from "eat" adds 116 to the sum.
+At the end, both strings are equal, and 115 + 116 = 231 is the minimum sum possible to achieve this.
+
+Method 1: Tabulation dp
+TC - O(N*M) SC - O(N*M)
+
+class Solution {
+public:
+    int minimumDeleteSum(string s1, string s2) {
+        int m = s1.size(), n = s2.size();
+        int dp[m+1][n+1];                   
+        
+		for(int i=0;i<=m;i++)            
+			dp[i][0] = 0;
+		for(int i=0;i<=n;i++)
+			dp[0][i] = 0;
+
+		for(int i=1;i<=m;i++) {                
+			for(int j=1;j<=n;j++) {
+				if(s1[i-1] == s2[j-1])
+					dp[i][j] = dp[i-1][j-1] + s1[i-1];
+				else	
+					dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+			}
+		}
+        int ans = 0;
+        for (const char& l: s1) 
+            ans += l;
+        for (const char& l: s2) 
+            ans += l;
+		return ans - 2*dp[m][n];
+    }
+};
