@@ -1,0 +1,6 @@
+Given a string s, return all the palindromic permutations (without duplicates) of it. Return an empty list if no palindromic permutation could be form.
+
+"aabb"
+["abba", "baab"]
+
+Method 1:
