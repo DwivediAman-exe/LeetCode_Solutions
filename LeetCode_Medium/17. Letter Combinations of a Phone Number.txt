@@ -41,7 +41,6 @@ public:
             ans.push_back(comb);
             return;
         }
-        
     
         for(auto x: mappings[digits[i] - '2']) {
             comb.push_back(x);
